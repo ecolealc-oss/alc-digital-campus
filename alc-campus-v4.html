@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ALC Digital Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:"DM Sans",sans-serif;background:#0D1B2A}
+:root{--blue:#1B2D5B;--dark:#0D1B2A;--mid:#2A468A;--gold:#C9A84C;--gold2:#F0D98C;--gold3:#8B6B28;--bg:#F2F5FA;--white:#fff;--green:#1A7A4A;--red:#C0392B}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:#0D1B2A;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+#splash.hide{opacity:0;pointer-events:none}
+.sp-logo{font-family:"Playfair Display",serif;font-size:52px;color:#C9A84C;font-weight:900;letter-spacing:3px}
+.sp-sub{color:rgba(201,168,76,.5);font-size:10px;letter-spacing:6px;text-transform:uppercase;margin-top:8px}
+.sp-tag{color:rgba(255,255,255,.2);font-size:12px;margin-top:16px;font-style:italic}
+.sp-bar{width:150px;height:3px;background:rgba(201,168,76,.2);border-radius:2px;margin-top:24px;overflow:hidden}
+.sp-fill{height:100%;background:#C9A84C;animation:fill 2.5s ease forwards}
+@keyframes fill{from{width:0}to{width:100%}}
+
+/* AUTH */
+#auth{position:fixed;inset:0;background:linear-gradient(160deg,#0D1B2A,#1B2D5B,#2A468A);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;display:none}
+.auth-card{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.auth-logo{text-align:center;margin-bottom:16px}
+.auth-logo svg{width:52px;height:52px}
+.auth-h{font-family:"Playfair Display",serif;font-size:22px;font-weight:900;color:#1B2D5B;text-align:center;margin-bottom:4px}
+.auth-s{font-size:12px;color:#718096;text-align:center;margin-bottom:20px}
+.tab-row{display:flex;background:#F2F5FA;border-radius:12px;padding:4px;margin-bottom:18px}
+.tab-btn{flex:1;border:none;background:none;padding:9px;border-radius:9px;font-size:13px;font-weight:700;color:#A0AEC0;cursor:pointer;transition:all .2s;font-family:"DM Sans",sans-serif}
+.tab-btn.on{background:#fff;color:#1B2D5B;box-shadow:0 2px 8px rgba(27,45,91,.1)}
+.auth-lbl{font-size:11.5px;font-weight:700;color:#1B2D5B;margin-bottom:5px;display:block}
+.auth-inp{width:100%;padding:12px 14px;border:2px solid #E8EEF6;border-radius:12px;font-size:14px;color:#1B2D5B;outline:none;margin-bottom:12px;font-family:"DM Sans",sans-serif;transition:border-color .2s}
+.auth-inp:focus{border-color:#C9A84C}
+.btn-gold{background:linear-gradient(135deg,#8B6B28,#C9A84C);color:#0D1B2A;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;width:100%;cursor:pointer;font-family:"DM Sans",sans-serif;margin-bottom:10px}
+.btn-blue{background:linear-gradient(135deg,#1B2D5B,#2A468A);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;width:100%;cursor:pointer;font-family:"DM Sans",sans-serif;margin-bottom:10px}
+.divider{text-align:center;color:#A0AEC0;font-size:11px;margin:10px 0;position:relative}
+.divider::before,.divider::after{content:"";position:absolute;top:50%;width:40%;height:1px;background:#E8EEF6}
+.divider::before{left:0}.divider::after{right:0}
+.btn-guest{background:none;border:2px solid #E8EEF6;border-radius:12px;width:100%;padding:11px;font-size:13px;color:#718096;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif}
+
+/* APP */
+#app{display:none;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:#F2F5FA;position:relative;overflow:hidden}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#0D1B2A,#1B2D5B);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #C9A84C;flex-shrink:0}
+.hdr-brand{display:flex;align-items:center;gap:10px}
+.hdr-title{color:#fff;font-family:"Playfair Display",serif;font-size:14px;font-weight:900;line-height:1.1}
+.hdr-sub{color:#C9A84C;font-size:7px;letter-spacing:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:7px}
+.hdr-btn{background:rgba(255,255,255,.12);border:none;border-radius:8px;color:#fff;font-size:13px;padding:5px 7px;cursor:pointer;font-family:"DM Sans",sans-serif}
+.hdr-lang{color:#C9A84C;font-size:10px;font-weight:700;letter-spacing:1px}
+.hdr-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8B6B28,#C9A84C);display:flex;align-items:center;justify-content:center;font-weight:900;color:#0D1B2A;font-size:11px;border:2px solid rgba(201,168,76,.4);cursor:pointer;flex-shrink:0}
+.notif-wrap{position:relative}
+.notif-badge{position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:#C0392B;border:1.5px solid #0D1B2A}
+
+/* SEARCH */
+#searchBar{padding:9px 14px;background:#fff;border-bottom:1px solid #E8EEF6;display:none;gap:8px;align-items:center}
+#searchBar.show{display:flex}
+#searchInput{flex:1;padding:8px 12px;border:2px solid #E8EEF6;border-radius:10px;font-size:13px;color:#1B2D5B;outline:none;font-family:"DM Sans",sans-serif}
+#searchInput:focus{border-color:#C9A84C}
+#searchResults{position:absolute;background:#F2F5FA;top:0;left:0;right:0;bottom:0;z-index:50;overflow-y:auto;padding:8px 14px;display:none}
+#searchResults.show{display:block}
+
+/* PAGE */
+.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:68px}
+.page::-webkit-scrollbar{width:0}
+
+/* NAV */
+.nav{position:absolute;bottom:0;left:0;right:0;height:60px;background:#fff;border-top:1px solid #E0E6F0;display:flex;box-shadow:0 -4px 20px rgba(27,45,91,.08);z-index:10}
+.nav-btn{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:#A0AEC0;font-size:7.5px;font-weight:700;padding:0 2px;position:relative;font-family:"DM Sans",sans-serif;transition:color .2s}
+.nav-btn.on{color:#C9A84C}
+.nav-btn.on::before{content:"";position:absolute;top:0;left:15%;right:15%;height:2.5px;background:#C9A84C;border-radius:0 0 4px 4px}
+.nav-icon{font-size:17px;line-height:1}
+
+/* SHARED */
+.sec{padding:14px 14px 4px}
+.sec-h{font-family:"Playfair Display",serif;font-size:17px;font-weight:700;color:#1B2D5B}
+.sec-s{font-size:11px;color:#718096;margin-top:2px}
+.card{background:#fff;border-radius:15px;margin:0 14px 12px;box-shadow:0 2px 12px rgba(27,45,91,.07);overflow:hidden}
+.card-t{padding:11px 14px 9px;font-weight:700;font-size:13px;color:#1B2D5B;border-bottom:1px solid #F0F2F8}
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:9.5px;font-weight:700}
+
+/* HOME */
+.hero{margin:12px 14px 10px;padding:18px 15px;border-radius:18px;background:linear-gradient(135deg,#0D1B2A,#1B2D5B,#2A468A)}
+.hero-name{color:rgba(255,255,255,.45);font-size:11px}
+.hero-user{color:#fff;font-family:"Playfair Display",serif;font-size:17px;font-weight:700;margin-top:2px}
+.hero-row{display:flex;gap:7px;margin-top:11px}
+.hero-stat{flex:1;background:rgba(255,255,255,.08);border-radius:10px;padding:9px 4px;text-align:center}
+.hero-val{color:#C9A84C;font-size:19px;font-weight:900;font-family:"Playfair Display",serif}
+.hero-lbl{color:rgba(255,255,255,.4);font-size:8px;margin-top:1px}
+.counter{margin:0 14px 12px;padding:12px;border-radius:14px;background:linear-gradient(135deg,#8B6B28,#C9A84C);display:flex;justify-content:space-around}
+.ctr-v{font-family:"Playfair Display",serif;font-size:21px;font-weight:900;color:#0D1B2A;text-align:center}
+.ctr-l{font-size:8.5px;font-weight:700;color:rgba(13,27,42,.6);text-align:center;margin-top:1px}
+
+/* NEWS */
+.news-row{display:flex;gap:10px;padding:6px 14px 4px;overflow-x:auto}
+.news-row::-webkit-scrollbar{height:0}
+.news-card{flex-shrink:0;width:190px;border-radius:13px;overflow:hidden;box-shadow:0 2px 10px rgba(27,45,91,.1)}
+.news-img{height:80px;display:flex;align-items:center;justify-content:center;font-size:34px}
+.news-body{background:#fff;padding:9px 11px}
+.news-tag2{font-size:8.5px;font-weight:700;color:#C9A84C;letter-spacing:1px;text-transform:uppercase}
+.news-title{font-size:11.5px;font-weight:700;color:#1B2D5B;margin-top:3px;line-height:1.3}
+.news-date{font-size:9.5px;color:#A0AEC0;margin-top:3px}
+
+/* CATALOGUE */
+.cat-card{margin:0 14px 8px;padding:11px 12px;border-radius:13px;background:#fff;box-shadow:0 2px 8px rgba(27,45,91,.06);border-left:4px solid #C9A84C;cursor:pointer}
+.cat-inner{display:flex;align-items:center;gap:10px}
+.cat-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cat-name{font-weight:700;font-size:13px;color:#1B2D5B}
+.cat-cnt{font-size:10px;color:#718096;margin-top:1px}
+.cat-arr{margin-left:auto;color:#CBD5E0;font-size:15px;transition:transform .2s}
+.cat-card.open .cat-arr{color:#C9A84C;transform:rotate(90deg)}
+.sub-wrap{margin:0 14px 4px;padding-left:12px;border-left:2px solid rgba(201,168,76,.2)}
+.sub-card{background:#F8FAFC;border-radius:10px;padding:8px 11px;margin-bottom:5px;cursor:pointer;border:1.5px solid #E8EEF6}
+.sub-name{font-weight:700;font-size:12px;color:#1B2D5B}
+.sub-cnt{font-size:10px;color:#718096}
+.sub-arr{float:right;color:#CBD5E0}
+.mod-list{padding:2px 0 4px}
+.mod-item{display:flex;align-items:center;gap:8px;padding:7px 9px;margin-bottom:4px;border-radius:9px;background:#fff;border:1.5px solid #E8EEF6;cursor:pointer}
+.mod-dot{width:7px;height:7px;border-radius:50%;background:#C9A84C;flex-shrink:0}
+.mod-name{flex:1;font-size:11.5px;color:#1B2D5B;font-weight:500}
+.mod-price{font-size:10px;font-weight:700;color:#C9A84C}
+.mod-ok{font-size:10px;font-weight:700;color:#1A7A4A}
+
+/* PROMO */
+.promo{margin:0 14px 14px;padding:17px;border-radius:15px;background:linear-gradient(135deg,#1B2D5B,#2A468A)}
+.promo-t{color:#fff;font-family:"Playfair Display",serif;font-size:14px;font-weight:700;margin-bottom:4px}
+.promo-s{color:rgba(255,255,255,.55);font-size:11px;line-height:1.5}
+.promo-btn2{margin-top:11px;background:#C9A84C;color:#0D1B2A;border:none;padding:8px 15px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;font-family:"DM Sans",sans-serif}
+
+/* LEARN */
+.path-node{display:flex;align-items:center;gap:12px;margin-bottom:15px;position:relative;padding:0 14px}
+.path-node::after{content:"";position:absolute;left:34px;bottom:-15px;width:2px;height:15px;background:rgba(201,168,76,.25)}
+.path-node:last-child::after{display:none}
+.path-circ{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;border:3px solid transparent}
+.path-circ.done{background:#1B2D5B;border-color:#C9A84C}
+.path-circ.active{background:#C9A84C;border-color:#8B6B28}
+.path-circ.locked{background:#E8EEF6;border-color:#CBD5E0}
+.path-name{font-weight:700;font-size:13px;color:#1B2D5B}
+.path-status{font-size:10px;margin-top:2px}
+.lib-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F0F2F8;cursor:pointer}
+.lib-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.lib-name{flex:1;font-size:12px;font-weight:600;color:#1B2D5B}
+.cal-item{display:flex;gap:11px;padding:10px 14px;border-bottom:1px solid #F0F2F8;align-items:center}
+.cal-day2{font-family:"Playfair Display",serif;font-size:20px;font-weight:900;color:#1B2D5B;line-height:1;width:36px;text-align:center}
+.cal-mo{font-size:9px;font-weight:700;color:#C9A84C;text-transform:uppercase;text-align:center}
+.cal-name{font-weight:700;font-size:12px;color:#1B2D5B}
+.cal-time2{font-size:10px;color:#718096;margin-top:2px}
+
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 14px 12px}
+.dash-card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(27,45,91,.06);border-top:3px solid #C9A84C}
+.dash-ico{font-size:22px;margin-bottom:4px}
+.dash-val{font-family:"Playfair Display",serif;font-size:24px;font-weight:900;color:#1B2D5B}
+.dash-lbl{font-size:10px;color:#A0AEC0;margin-top:2px}
+.graph-box{background:#fff;margin:0 14px 12px;border-radius:13px;padding:13px;box-shadow:0 2px 8px rgba(27,45,91,.06)}
+.graph-t{font-weight:700;font-size:12.5px;color:#1B2D5B;margin-bottom:11px}
+.bar-wrap{display:flex;align-items:flex-end;gap:5px;height:75px}
+.bar2{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,#C9A84C,#8B6B28);min-width:0}
+.bar-l{font-size:8px;color:#A0AEC0;text-align:center;margin-top:3px}
+.badge-row2{display:flex;gap:9px;padding:11px 14px;overflow-x:auto}
+.badge-row2::-webkit-scrollbar{height:0}
+.badge-item{flex-shrink:0;text-align:center;width:64px}
+.badge-circ{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;margin:0 auto 3px}
+.badge-circ.earned{background:linear-gradient(135deg,#8B6B28,#C9A84C);box-shadow:0 3px 10px rgba(201,168,76,.3)}
+.badge-circ.locked{background:#E8EEF6;filter:grayscale(1);opacity:.45}
+.badge-nm{font-size:8px;font-weight:700;color:#1B2D5B;line-height:1.2}
+.enr-item{background:#fff;border-radius:11px;padding:11px 12px;margin:0 14px 8px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(27,45,91,.06);cursor:pointer;border-left:4px solid #C9A84C}
+.enr-title{font-weight:700;font-size:12px;color:#1B2D5B}
+.enr-sub{font-size:10px;color:#A0AEC0;margin-top:1px}
+.enr-pct{margin-left:auto;font-weight:800;font-size:13px;color:#C9A84C}
+
+/* COMMUNITY */
+.comm-tabs{display:flex;gap:7px;padding:0 14px 10px;overflow-x:auto}
+.comm-tabs::-webkit-scrollbar{height:0}
+.comm-tab{flex-shrink:0;background:#fff;border:1.5px solid #E8EEF6;border-radius:20px;padding:7px 12px;font-size:11px;font-weight:700;color:#1B2D5B;cursor:pointer;white-space:nowrap;font-family:"DM Sans",sans-serif}
+.comm-tab.on{border-color:#C9A84C;background:rgba(201,168,76,.08);color:#8B6B28}
+.forum-post{background:#fff;border-radius:12px;padding:12px;margin-bottom:9px;box-shadow:0 2px 8px rgba(27,45,91,.06)}
+.post-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff;flex-shrink:0}
+.post-author{font-weight:700;font-size:12px;color:#1B2D5B}
+.post-meta{font-size:9.5px;color:#A0AEC0}
+.post-text{font-size:12px;color:#2D3748;line-height:1.6;margin:7px 0}
+.post-reply{background:#F8FAFC;border-radius:9px;padding:8px 10px;margin-bottom:5px;border-left:3px solid #C9A84C}
+.reply-author{font-weight:700;font-size:10px;color:#1B2D5B;margin-bottom:2px}
+.reply-text{font-size:11px;color:#4A5568;line-height:1.5}
+.forum-in{width:100%;padding:8px 10px;border:1.5px solid #E8EEF6;border-radius:9px;font-size:12px;outline:none;color:#1B2D5B;font-family:"DM Sans",sans-serif;resize:none}
+.forum-in:focus{border-color:#C9A84C}
+.testi-card{background:#fff;border-radius:13px;padding:15px;margin-bottom:10px;box-shadow:0 2px 10px rgba(27,45,91,.07);border-top:3px solid #C9A84C}
+.testi-q{font-size:28px;color:#C9A84C;line-height:1}
+.testi-txt{font-size:12px;color:#2D3748;line-height:1.6;margin:6px 0 10px;font-style:italic}
+.testi-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff}
+.testi-name{font-weight:700;font-size:12px;color:#1B2D5B}
+.testi-role{font-size:10px;color:#718096}
+.trainer-card{background:#fff;border-radius:13px;padding:13px;margin-bottom:10px;box-shadow:0 2px 8px rgba(27,45,91,.06)}
+.trainer-av{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.trainer-name{font-family:"Playfair Display",serif;font-size:14px;font-weight:700;color:#1B2D5B}
+.trainer-title{font-size:10.5px;color:#718096;margin-top:2px}
+.trainer-exp{font-size:10px;color:#C9A84C;font-weight:700;margin-top:3px}
+.alumni-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F0F2F8}
+.job-item{padding:12px 14px;border-bottom:1px solid #F0F2F8;cursor:pointer}
+.job-title{font-weight:700;font-size:12.5px;color:#1B2D5B}
+.job-co{font-size:10.5px;color:#718096;margin-top:2px}
+.job-tags{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+
+/* NOTIFICATIONS */
+.notif-item{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid #F0F2F8;cursor:pointer}
+.notif-item.unread{background:rgba(201,168,76,.04)}
+.notif-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.notif-title{font-weight:700;font-size:12px;color:#1B2D5B}
+.notif-txt{font-size:10.5px;color:#718096;margin-top:2px;line-height:1.4}
+.notif-time{font-size:9px;color:#A0AEC0;margin-top:3px}
+.notif-dot2{width:7px;height:7px;border-radius:50%;background:#C0392B;flex-shrink:0;margin-top:5px}
+
+/* AI CHAT */
+#aiPage{display:flex;flex-direction:column;height:100%}
+.ai-header{padding:11px 14px 8px;border-bottom:1px solid #E8EEF6;background:#fff;flex-shrink:0}
+.ai-sugs{display:flex;gap:7px;padding:7px 14px;background:#F2F5FA;overflow-x:auto;flex-shrink:0}
+.ai-sugs::-webkit-scrollbar{height:0}
+.ai-sug2{flex-shrink:0;background:#fff;border:1.5px solid #E8EEF6;border-radius:20px;padding:6px 11px;font-size:11px;color:#1B2D5B;font-weight:600;cursor:pointer;white-space:nowrap;font-family:"DM Sans",sans-serif}
+.ai-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
+.ai-msgs::-webkit-scrollbar{width:0}
+.ai-msg{display:flex;gap:8px;margin-bottom:12px;align-items:flex-end}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-bubble{max-width:78%;padding:10px 12px;border-radius:16px;font-size:12.5px;line-height:1.55}
+.ai-bubble.bot{background:#fff;color:#1B2D5B;border-radius:4px 16px 16px 16px;box-shadow:0 2px 8px rgba(27,45,91,.08)}
+.ai-bubble.user{background:linear-gradient(135deg,#8B6B28,#C9A84C);color:#0D1B2A;border-radius:16px 4px 16px 16px}
+.ai-av2{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ai-av2.bot{background:linear-gradient(135deg,#1B2D5B,#2A468A)}
+.ai-av2.user{background:linear-gradient(135deg,#8B6B28,#C9A84C);font-weight:900;color:#0D1B2A;font-size:9px}
+.ai-typing-dots{display:flex;gap:4px;padding:8px}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:#C9A84C;animation:bounce 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.ai-input-row{padding:10px 14px;background:#fff;border-top:1px solid #E8EEF6;display:flex;gap:8px;flex-shrink:0}
+.ai-inp{flex:1;padding:10px 12px;border:2px solid #E8EEF6;border-radius:12px;font-size:13px;color:#1B2D5B;outline:none;font-family:"DM Sans",sans-serif}
+.ai-inp:focus{border-color:#C9A84C}
+.ai-send{background:linear-gradient(135deg,#8B6B28,#C9A84C);border:none;border-radius:12px;padding:10px 13px;color:#0D1B2A;font-size:15px;cursor:pointer}
+
+/* MORE */
+.more-item{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #F0F2F8;cursor:pointer}
+.more-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.more-name{flex:1;font-weight:700;font-size:13px;color:#1B2D5B}
+.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
+.soc-btn{border:none;border-radius:13px;padding:13px 10px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-weight:700;font-size:11px;font-family:"DM Sans",sans-serif}
+.soc-ico{font-size:25px}
+.pay-method2{border:2px solid #E8EEF6;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;margin-bottom:8px;transition:border-color .2s}
+.pay-method2.on{border-color:#C9A84C;background:rgba(201,168,76,.05)}
+.pay-ico2{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px}
+.pay-nm{font-weight:700;font-size:12.5px;color:#1B2D5B}
+.pay-num{font-size:11px;color:#718096;margin-top:2px}
+.copy-btn2{background:#1B2D5B;border:none;border-radius:7px;padding:4px 10px;color:#fff;font-size:10px;font-weight:700;cursor:pointer;margin-left:auto;font-family:"DM Sans",sans-serif}
+.faq-item{background:#fff;border-radius:11px;margin-bottom:7px;overflow:hidden}
+.faq-q{padding:12px 13px;font-weight:700;font-size:12.5px;color:#1B2D5B;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-a{padding:0 13px 11px;font-size:12px;color:#4A5568;line-height:1.6}
+.reg-art{background:#fff;border-radius:11px;padding:12px;margin-bottom:8px;border-left:4px solid #C9A84C}
+.reg-art-t{font-weight:700;font-size:12.5px;color:#1B2D5B;margin-bottom:5px}
+.reg-art-s{font-size:11.5px;color:#4A5568;line-height:1.6}
+.ticket-item{background:#fff;border-radius:11px;padding:12px;margin-bottom:8px;border-left:4px solid #C9A84C;box-shadow:0 2px 8px rgba(27,45,91,.05)}
+.inp{width:100%;padding:11px 13px;border:2px solid #E8EEF6;border-radius:11px;font-size:13px;color:#1B2D5B;outline:none;font-family:"DM Sans",sans-serif;transition:border-color .2s;margin-bottom:9px}
+.inp:focus{border-color:#C9A84C}
+.level-card{border:2px solid #E8EEF6;border-radius:13px;padding:15px;margin-bottom:9px;cursor:pointer;transition:border-color .2s}
+.level-card.on{border-color:#C9A84C;background:rgba(201,168,76,.05)}
+.cert-card{background:#fff;border-radius:18px;padding:22px 16px;text-align:center;border:2.5px solid #C9A84C;box-shadow:0 8px 40px rgba(201,168,76,.12)}
+.share-btn{flex:1;border:none;border-radius:10px;padding:10px 6px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:"DM Sans",sans-serif}
+
+/* PAY MODAL */
+.pay-info{background:#FFF8EE;border-radius:11px;padding:12px;border:1px solid rgba(201,168,76,.3);margin-bottom:12px}
+.pay-success{text-align:center;padding:32px 16px}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-logo">ALC</div>
+  <div class="sp-sub">Digital Campus</div>
+  <div class="sp-tag">Formation · Impact · Influence</div>
+  <div class="sp-bar"><div class="sp-fill"></div></div>
+</div>
+
+<!-- AUTH -->
+<div id="auth">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M40 4L72 18L72 50C72 64 57 74 40 78C23 74 8 64 8 50L8 18Z" fill="#1B2D5B" stroke="#C9A84C" stroke-width="2.5"/>
+        <text x="40" y="50" text-anchor="middle" fill="white" font-size="24" font-weight="bold" font-family="Georgia,serif">A</text>
+        <polygon points="40,16 43,22 49,22 44,26 46,32 40,28 34,32 36,26 31,22 37,22" fill="#C9A84C"/>
+      </svg>
+    </div>
+    <div class="auth-h">ALC Digital Campus</div>
+    <div class="auth-s">Formation · Impact · Influence</div>
+    <div class="tab-row">
+      <button class="tab-btn on" id="tabLogin" onclick="switchAuthTab('login')">Connexion</button>
+      <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Inscription</button>
+    </div>
+    <div id="nameField" style="display:none">
+      <label class="auth-lbl">Nom complet</label>
+      <input class="auth-inp" id="inputName" placeholder="Votre nom complet">
+    </div>
+    <label class="auth-lbl">Email</label>
+    <input class="auth-inp" id="inputEmail" type="email" placeholder="votre@email.com">
+    <label class="auth-lbl">Mot de passe</label>
+    <input class="auth-inp" id="inputPass" type="password" placeholder="••••••••">
+    <button class="btn-gold" id="authBtn" onclick="doAuth()">Se connecter →</button>
+    <div class="divider">ou</div>
+    <button class="btn-guest" onclick="doAuth()">Continuer sans compte</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-brand">
+      <svg viewBox="0 0 80 80" width="36" height="36" fill="none">
+        <path d="M40 4L72 18L72 50C72 64 57 74 40 78C23 74 8 64 8 50L8 18Z" fill="#1B2D5B" stroke="#C9A84C" stroke-width="2.5"/>
+        <text x="40" y="50" text-anchor="middle" fill="white" font-size="24" font-weight="bold" font-family="Georgia,serif">A</text>
+        <polygon points="40,16 43,22 49,22 44,26 46,32 40,28 34,32 36,26 31,22 37,22" fill="#C9A84C"/>
+      </svg>
+      <div><div class="hdr-title">ALC Digital Campus</div><div class="hdr-sub">Formation · Impact · Influence</div></div>
+    </div>
+    <div class="hdr-right">
+      <button class="hdr-btn hdr-lang" id="langBtn" onclick="toggleLang()">EN</button>
+      <button class="hdr-btn" onclick="toggleSearch()">🔍</button>
+      <div class="notif-wrap">
+        <button class="hdr-btn" onclick="goTab('notifs')">🔔<span class="notif-badge" id="notifBadge"></span></button>
+      </div>
+      <div class="hdr-av" id="userAv">KP</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div id="searchBar">
+    <input id="searchInput" placeholder="Rechercher un module…" oninput="doSearch(this.value)">
+    <button style="background:none;border:none;font-size:18px;color:#A0AEC0;cursor:pointer" onclick="closeSearch()">✕</button>
+  </div>
+  <div id="searchResults"></div>
+
+  <!-- PAGES -->
+  <div class="page" id="page">
+    <!-- Home, Learn, Dash, Community, Notifs, AI, More content injected here -->
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <button class="nav-btn on" id="nav-home" onclick="goTab('home')"><span class="nav-icon">🏠</span><span id="nl-home">Accueil</span></button>
+    <button class="nav-btn" id="nav-learn" onclick="goTab('learn')"><span class="nav-icon">📚</span><span id="nl-learn">Apprendre</span></button>
+    <button class="nav-btn" id="nav-dash" onclick="goTab('dash')"><span class="nav-icon">📊</span><span id="nl-dash">Suivi</span></button>
+    <button class="nav-btn" id="nav-community" onclick="goTab('community')"><span class="nav-icon">👥</span><span id="nl-comm">Communauté</span></button>
+    <button class="nav-btn" id="nav-ai" onclick="goTab('ai')"><span class="nav-icon">🤖</span><span id="nl-ai">Assistant</span></button>
+    <button class="nav-btn" id="nav-more" onclick="goTab('more')"><span class="nav-icon">☰</span><span id="nl-more">Plus</span></button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// ALC DIGITAL CAMPUS V4 — Pure JS
+// ═══════════════════════════════════════
+const GROQ_KEY="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";
+const CONTACTS={
+  facebook:"https://www.facebook.com/profile.php?id=61553983622096",
+  instagram:"https://www.instagram.com/alcinstitute7",
+  telegram:"https://t.me/boost?c=3849410357",
+  youtube:"https://youtube.com/@alcinstitute",
+  whatsapp:"https://wa.me/2250141234600",
+  email:"mailto:ecole.alc@gmail.com",
+  maps:"https://maps.google.com/?q=Abidjan+Songon",
+  orange:"+225 0777727482",
+  wave:"+225 0141234600"
+};
+
+// STATE
+let lang="fr";
+let currentTab="home";
+let userName="Kan Parfait";
+let authMode2="login";
+let programs={};
+let notifs=[
+  {id:1,icon:"🎉",title:"Nouvelle session disponible",text:"Session Gestion de Projets — 15 Mars. Places limitées !",time:"Il y a 10 min",unread:true,bg:"#EEF6FF"},
+  {id:2,icon:"✅",title:"Paiement confirmé",text:"Inscription au module Communication Stratégique validée.",time:"Il y a 2h",unread:true,bg:"#F0FFF6"},
+  {id:3,icon:"📚",title:"Nouveau contenu PDF",text:"3 nouveaux PDF ajoutés à la bibliothèque.",time:"Il y a 5h",unread:false,bg:"#FFF8EE"},
+  {id:4,icon:"🏆",title:"Badge débloqué !",text:"Félicitations, vous avez obtenu le badge Explorateur.",time:"Hier",unread:false,bg:"#FDF6FF"},
+  {id:5,icon:"📅",title:"Rappel de session",text:"Votre session Leadership commence demain à 9h.",time:"Hier",unread:false,bg:"#EEF6FF"}
+];
+let posts=[
+  {id:1,author:"Kouamé A.",av:"KA",color:"#1B2D5B",cat:"CS1",time:"Il y a 2h",
+   text:"Comment distinguer la communication de crise de la institutionnelle classique ?",
+   replies:[{av:"PY",author:"Prof. Yao",text:"La communication de crise est réactive. L\'institutionnelle est proactive et stratégique.",time:"Il y a 1h",isProf:true}]},
+  {id:2,author:"Marie-Claire K.",av:"MK",color:"#1A5C35",cat:"Formation",time:"Il y a 5h",
+   text:"J\'ai terminé le Storytelling pédagogique — vraiment transformateur !",replies:[]}
+];
+let aiMessages=[{role:"bot",text:"Bonjour ! Je suis l\'Assistant IA ALC. Comment puis-je vous aider aujourd\'hui ? 🎓"}];
+let communityTab="forum";
+let moreSection="";
+let faqOpen=-1;
+let payMethodSel="";
+let activeCourse=null;
+let activePayCourse=null;
+let certCourse=null;
+let diagLevel=-1;
+let bookSession=-1;
+let selectedSub={};
+let selectedCat={};
+let tickets=[
+  {id:1,title:"Question sur le paiement Mobile Money",status:"Résolu",date:"5 Mars 2025",color:"#1A7A4A"},
+  {id:2,title:"Accès au module Communication",status:"En cours",date:"8 Mars 2025",color:"#C9A84C"}
+];
+
+// TRANSLATIONS
+const T={
+  fr:{home:"Accueil",learn:"Apprendre",dash:"Suivi",comm:"Communauté",ai:"Assistant",more:"Plus",
+      login:"Connexion",register:"Inscription",guest:"Continuer sans compte"},
+  en:{home:"Home",learn:"Learn",dash:"Progress",comm:"Community",ai:"AI Chat",more:"More",
+      login:"Login",register:"Register",guest:"Continue as guest"}
+};
+
+// CATALOGUE DATA
+const CATS=[
+  {id:"tech",icon:"🔧",name:{fr:"Filières Techniques",en:"Technical Tracks"},color:"#1A3A2A",accent:"#4CAF7D",
+   subs:[
+    {id:"bat",name:{fr:"Bâtiment & Infrastructures",en:"Building"},icon:"🏗️",
+     progs:["Électricité bâtiment","Plomberie & Installation sanitaire","Maçonnerie","Menuiserie aluminium","Construction métallique"]},
+    {id:"maint",name:{fr:"Maintenance & Technologies",en:"Maintenance"},icon:"⚙️",
+     progs:["Mécanique auto & moto","Froid & Climatisation","Maintenance industrielle","Maintenance informatique & réseaux"]},
+    {id:"hotel",name:{fr:"Hôtellerie & Métiers de Bouche",en:"Hospitality"},icon:"🍽️",
+     progs:["Restauration professionnelle","Service de restauration","Réception hôtelière","Pâtisserie & Décoration"]},
+    {id:"agro",name:{fr:"Agro & Transformation",en:"Agriculture"},icon:"🌱",
+     progs:["Production maraîchère","Transformation agro-alimentaire","Agro-business","Logistique & Gestion de stocks"]}
+   ]},
+  {id:"cs1",icon:"📘",name:{fr:"Cycle Supérieur 1",en:"Higher Level 1"},color:"#1B2D5B",accent:"#C9A84C",
+   subs:[
+    {id:"com1",name:{fr:"Communication & Image",en:"Communication"},icon:"📣",
+     progs:["Communication institutionnelle","Attaché de presse","Branding & Image de marque","Storytelling institutionnel","Communication interne","Prise de parole","Gestion de réputation","Marketing territorial","Communication & RSE"]},
+    {id:"gov1",name:{fr:"Gestion & Gouvernance",en:"Governance"},icon:"🏛️",
+     progs:["Gestion des ONG","Organisation des associations","Gestion financière","Développement de partenariats","Suivi & Évaluation de projets","Leadership institutionnel"]},
+    {id:"proj1",name:{fr:"Gestion de Projets",en:"Project Management"},icon:"📋",
+     progs:["Principes PMP","Planification de projets","Budget & Ressources","Méthodes Agile","Suivi & Évaluation"]},
+    {id:"intel1",name:{fr:"Intelligence & Leadership",en:"Leadership"},icon:"🧠",
+     progs:["Intelligence émotionnelle","Intelligence économique","Diplomatie organisationnelle","Management qualité ISO 9001"]}
+   ]},
+  {id:"cs2",icon:"📗",name:{fr:"Cycle Supérieur 2",en:"Higher Level 2"},color:"#2B1A3A",accent:"#A855E8",
+   subs:[
+    {id:"comstr",name:{fr:"Communication Stratégique",en:"Strategic Communication"},icon:"🎯",
+     progs:["Communication stratégique","Relations publiques & Lobbying","Brand management","Communication digitale avancée","Prise de parole exécutive","Communication éthique & RSE"]},
+    {id:"gouv2",name:{fr:"Gouvernance Avancée",en:"Advanced Governance"},icon:"⚖️",
+     progs:["Leadership & Gouvernance stratégique","Audit organisationnel","Planification stratégique","Gestion du changement","Partenariats internationaux"]},
+    {id:"risk",name:{fr:"Gestion des Risques",en:"Risk Management"},icon:"🛡️",
+     progs:["Gestion intégrée des risques","Cybersécurité","Continuité des activités","Audit sécurité","Simulation de crise"]},
+    {id:"entrepr",name:{fr:"Entrepreneuriat & Digital",en:"Entrepreneurship"},icon:"🚀",
+     progs:["Stratégie d\'entreprise","Innovation & Business model","Transformation digitale","Création d\'entreprises"]}
+   ]},
+  {id:"form",icon:"🎓",name:{fr:"Formation de Formateur",en:"Trainer Training"},color:"#0D2B4A",accent:"#3DC9E8",
+   subs:[
+    {id:"form1",name:{fr:"Cycle 1 — Formateur Débutant",en:"Cycle 1 — Beginner"},icon:"📝",
+     progs:["Compétences du formateur","Développer sa confiance","Gestion du stress","Présenter & Convaincre","Communiquer efficacement","Ingénierie de la formation","Supports pédagogiques"]},
+    {id:"form2",name:{fr:"Cycle 2 — Formateur Expert",en:"Cycle 2 — Expert"},icon:"🎙️",
+     progs:["Conception pédagogique avancée","Animation de séminaire","Marketing du formateur","Digital learning & MOOC","Évaluation & Impact","Storytelling pédagogique"]}
+   ]}
+];
+
+const PRICES=[20000,25000,28000,30000,35000,38000,40000,45000,50000];
+const LEVELS=["Débutant","Intermédiaire","Avancé"];
+
+// Build programs map
+let progId=0;
+CATS.forEach(cat=>{
+  cat.subs.forEach(sub=>{
+    sub.progs.forEach(title=>{
+      progId++;
+      const id="p"+progId;
+      programs[id]={id,title,catId:cat.id,catName:cat.name,catIcon:cat.icon,catColor:cat.color,accent:cat.accent,
+        subId:sub.id,subName:sub.name,subIcon:sub.icon,
+        price:PRICES[progId%PRICES.length],level:LEVELS[progId%3],
+        enrolled:false,progress:0,rating:0};
+    });
+  });
+});
+
+const GRAPH=[10,25,40,55,45,70,85];
+const BADGES=[
+  {icon:"🌟",name:"Explorateur",earned:true},{icon:"📚",name:"Lecteur assidu",earned:true},
+  {icon:"🏆",name:"Premier quiz",earned:true},{icon:"🔥",name:"7 jours",earned:false},
+  {icon:"💎",name:"Module Expert",earned:false},{icon:"🎓",name:"Certifié ALC",earned:false}
+];
+const TRAINERS=[
+  {name:"Prof. Yao Kouamé",title:"Expert Communication Stratégique",exp:"15 ans",icon:"👨‍🏫",color:"#1B2D5B",rating:"4.9"},
+  {name:"Dr. Adjoua Bamba",title:"Experte Gouvernance & Leadership",exp:"12 ans",icon:"👩‍🏫",color:"#8B1A1A",rating:"4.8"},
+  {name:"M. Ibrahim Sanogo",title:"Expert Gestion de Projets",exp:"10 ans",icon:"👨‍💼",color:"#1A5C35",rating:"4.7"},
+  {name:"Mme. Fatou Diallo",title:"Spécialiste Formation de Formateurs",exp:"8 ans",icon:"👩‍💼",color:"#6B46C1",rating:"4.9"}
+];
+const TESTIMONIALS=[
+  {name:"Konan Alexis",role:"Resp. Communication, ONG Espoir",color:"#1B2D5B",
+   text:"La formation en Communication institutionnelle a transformé ma façon de travailler. Contenu très pratique.",prog:"Communication institutionnelle"},
+  {name:"Marie-Ange Koffi",role:"Cheffe de projet, Ministère de l\'Éducation",color:"#8B1A1A",
+   text:"ALC m\'a donné les outils pour gérer des projets complexes. Certification PMP obtenue 6 mois après !",prog:"Gestion de Projets PMP"},
+  {name:"Seydou Traoré",role:"Directeur, PME Abidjan",color:"#1A5C35",
+   text:"Le module Entrepreneuriat a été décisif. Un investissement qui a largement payé.",prog:"Entrepreneuriat & Digital"}
+];
+const ALUMNI=[
+  {name:"Élodie Ahou",role:"Dir. Communication",co:"Groupe NSIA",color:"#1B2D5B",cert:"Cycle Supérieur 1"},
+  {name:"Mamadou Coulibaly",role:"Chef de Projet Senior",co:"PNUD CI",color:"#8B1A1A",cert:"Gestion de Projets"},
+  {name:"Raïssa Yobouet",role:"Formatrice Certifiée",co:"Institut Indépendant",color:"#6B46C1",cert:"Formation de Formateur"},
+  {name:"Franck Assi",role:"Responsable RH",co:"Orange CI",color:"#1A5C35",cert:"Leadership"}
+];
+const JOBS=[
+  {title:"Chargé(e) de Communication",co:"ONG Action CI",loc:"Abidjan",type:"CDI",tags:["Communication","Digital"]},
+  {title:"Chef de Projet",co:"Cabinet Conseil Afrique",loc:"Abidjan",type:"CDI",tags:["PMP","Management"]},
+  {title:"Formateur indépendant",co:"Freelance",loc:"Remote",type:"Freelance",tags:["Formation","MOOC"]},
+  {title:"Responsable Gouvernance",co:"Banque Atlantique CI",loc:"Abidjan",type:"CDD",tags:["Gouvernance","Risques"]}
+];
+const FAQ=[
+  {q:"Comment s\'inscrire à une formation ALC ?",
+   a:"Choisissez votre module dans le catalogue, cliquez sur S\'inscrire, effectuez le paiement via Orange Money ou Wave, puis accédez immédiatement à votre cours."},
+  {q:"Quels modes de paiement sont acceptés ?",
+   a:"Orange Money (+225 0777727482) et Wave (+225 0141234600). Pour paiement carte, contactez-nous via WhatsApp."},
+  {q:"Les certificats sont-ils reconnus officiellement ?",
+   a:"Oui, nos certificats sont délivrés par l\'ALC Institute, reconnu par le Ministère de l\'Emploi de Côte d\'Ivoire."},
+  {q:"Puis-je suivre plusieurs formations simultanément ?",
+   a:"Absolument ! Aucune limite au nombre de formations que vous pouvez suivre en même temps."},
+  {q:"Y a-t-il des formations en ligne et en présentiel ?",
+   a:"Les deux options sont disponibles. En ligne via l\'application, en présentiel à Abidjan Songon."}
+];
+const REGS=[
+  {t:"Article 1 — Admission",s:"L\'admission est ouverte à toute personne majeure désireuse d\'acquérir de nouvelles compétences professionnelles, sans condition de diplôme préalable."},
+  {t:"Article 2 — Assiduité",s:"L\'apprenant s\'engage à suivre intégralement les modules auxquels il est inscrit. Toute absence > 20% entraîne l\'invalidation du module."},
+  {t:"Article 3 — Paiement",s:"Le paiement intégral est requis avant le début du module. Des facilités peuvent être accordées sur demande motivée."},
+  {t:"Article 4 — Certification",s:"Le certificat est délivré à l\'apprenant ayant obtenu une note minimale de 12/20 et satisfait aux critères d\'assiduité."},
+  {t:"Article 5 — Conduite",s:"Tout comportement irrespectueux entraîne une exclusion immédiate sans remboursement."}
+];
+const CALENDAR=[
+  {day:"15",mo:"MAR",name:"Gestion de Projets PMP",time:"09h00 - 17h00",type:"Session",tc:"#1B2D5B"},
+  {day:"22",mo:"MAR",name:"Communication Stratégique",time:"09h00 - 12h00",type:"Séminaire",tc:"#8B1A1A"},
+  {day:"05",mo:"AVR",name:"Leadership & Gouvernance",time:"14h00 - 18h00",type:"Session",tc:"#1A5C35"},
+  {day:"12",mo:"AVR",name:"Formation de Formateurs — Cycle 2",time:"09h00 - 17h00",type:"Intensif",tc:"#6B46C1"}
+];
+const LIBRARY=[
+  {name:"Guide PMP — Fondamentaux",size:"2.4 MB",icon:"📋",color:"#1B2D5B"},
+  {name:"Communication de Crise — Manuel",size:"1.8 MB",icon:"📣",color:"#8B1A1A"},
+  {name:"Ingénierie Pédagogique — Guide complet",size:"3.1 MB",icon:"📚",color:"#6B46C1"},
+  {name:"ISO 9001:2025 — Résumé opérationnel",size:"1.2 MB",icon:"⚙️",color:"#1A5C35"},
+  {name:"Leadership & Intelligence Émotionnelle",size:"2.7 MB",icon:"🧠",color:"#8B6B28"}
+];
+const SESSIONS=[
+  {date:"Samedi 15 Mars 2025",time:"09h00 – 17h00",spots:8},
+  {date:"Samedi 22 Mars 2025",time:"09h00 – 12h00",spots:12},
+  {date:"Samedi 5 Avril 2025",time:"14h00 – 18h00",spots:5}
+];
+const QUIZ=[
+  {q:"Quelle est la 1ère étape de l\'ingénierie de formation ?",opts:["Créer les supports","Analyser les besoins","Animer la session","Évaluer"],ans:1},
+  {q:"La méthode Agile repose sur :",opts:["Un planning rigide","Des cycles courts itératifs","La hiérarchie stricte","Des rapports mensuels"],ans:1},
+  {q:"Le storytelling institutionnel sert à :",opts:["Vendre des produits","Créer un lien émotionnel","Gérer les conflits","Contrôler les finances"],ans:1},
+  {q:"L\'ISO 9001:2025 concerne :",opts:["La sécurité informatique","Le management de la qualité","La gestion des RH","Le marketing"],ans:1},
+  {q:"L\'intelligence émotionnelle dans le leadership :",opts:["Améliore le budget","Motive et comprend les équipes","Améliore la compta","Réduit les réunions"],ans:1}
+];
+let quizStep=0,quizAnswers=[],quizSelected=null,quizDone=false;
+
+// ═══ INIT ═══
+window.onload=function(){
+  setTimeout(()=>{
+    document.getElementById("splash").classList.add("hide");
+    document.getElementById("auth").style.display="flex";
+  },2500);
+};
+
+function switchAuthTab(mode){
+  authMode2=mode;
+  document.getElementById("tabLogin").classList.toggle("on",mode==="login");
+  document.getElementById("tabRegister").classList.toggle("on",mode==="register");
+  document.getElementById("nameField").style.display=mode==="register"?"block":"none";
+  document.getElementById("authBtn").textContent=mode==="login"?"Se connecter →":"Créer mon compte →";
+}
+
+function doAuth(){
+  const name=document.getElementById("inputName").value;
+  if(name) userName=name.split(" ")[0];
+  document.getElementById("auth").style.display="none";
+  document.getElementById("app").style.display="flex";
+  document.getElementById("userAv").textContent=userName.substring(0,2).toUpperCase();
+  goTab("home");
+  updateNotifBadge();
+}
+
+function toggleLang(){
+  lang=lang==="fr"?"en":"fr";
+  document.getElementById("langBtn").textContent=lang==="fr"?"EN":"FR";
+  // Update nav labels
+  const t=T[lang];
+  document.getElementById("nl-home").textContent=t.home;
+  document.getElementById("nl-learn").textContent=t.learn;
+  document.getElementById("nl-dash").textContent=t.dash;
+  document.getElementById("nl-comm").textContent=t.comm;
+  document.getElementById("nl-ai").textContent=t.ai;
+  document.getElementById("nl-more").textContent=t.more;
+  goTab(currentTab);
+}
+
+function goTab(tab){
+  currentTab=tab;
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("on"));
+  const navEl=document.getElementById("nav-"+tab);
+  if(navEl) navEl.classList.add("on");
+  closeSearch();
+  render();
+}
+
+function updateNotifBadge(){
+  const n=notifs.filter(x=>x.unread).length;
+  const b=document.getElementById("notifBadge");
+  if(b) b.style.display=n>0?"block":"none";
+}
+
+function toggleSearch(){
+  const bar=document.getElementById("searchBar");
+  bar.classList.toggle("show");
+  if(bar.classList.contains("show")) document.getElementById("searchInput").focus();
+  else closeSearch();
+}
+
+function closeSearch(){
+  document.getElementById("searchBar").classList.remove("show");
+  document.getElementById("searchResults").classList.remove("show");
+  document.getElementById("searchInput").value="";
+}
+
+function doSearch(q){
+  const res=document.getElementById("searchResults");
+  if(!q){res.classList.remove("show");return;}
+  res.classList.add("show");
+  const found=Object.values(programs).filter(p=>p.title.toLowerCase().includes(q.toLowerCase())).slice(0,8);
+  if(found.length===0){res.innerHTML=\`<div style="text-align:center;padding:30px;color:#A0AEC0">Aucun résultat</div>\`;return;}
+  res.innerHTML=found.map(p=>\`
+    <div class="mod-item" style="margin-bottom:8px" onclick="openCourse('\${p.id}')">
+      <div class="mod-dot" style="background:\${p.accent}"></div>
+      <div class="mod-name">\${p.title}</div>
+      \${p.enrolled?\`<div class="mod-ok">✓</div>\`:\`<div class="mod-price">\${p.price.toLocaleString()} F</div>\`}
+    </div>
+  \`).join("");
+}
+
+// ═══ RENDER ═══
+function render(){
+  const page=document.getElementById("page");
+  if(currentTab==="home") page.innerHTML=renderHome();
+  else if(currentTab==="learn") page.innerHTML=renderLearn();
+  else if(currentTab==="dash") page.innerHTML=renderDash();
+  else if(currentTab==="community") page.innerHTML=renderCommunity();
+  else if(currentTab==="notifs") page.innerHTML=renderNotifs();
+  else if(currentTab==="ai") page.innerHTML=renderAI();
+  else if(currentTab==="more") page.innerHTML=renderMore();
+  else if(currentTab==="course") page.innerHTML=renderCourse();
+  else if(currentTab==="pay") page.innerHTML=renderPay();
+  else if(currentTab==="cert") page.innerHTML=renderCert();
+  else if(currentTab==="quiz") page.innerHTML=renderQuiz();
+  page.scrollTop=0;
+  if(currentTab==="ai") scrollAIBottom();
+}
+
+// ═══ HOME ═══
+function renderHome(){
+  const enrolled=Object.values(programs).filter(p=>p.enrolled);
+  const pct=enrolled.length?Math.round(enrolled.reduce((s,p)=>s+p.progress,0)/enrolled.length):0;
+  const done=enrolled.filter(p=>p.progress===100).length;
+  let cats=CATS.map(cat=>{
+    const open=selectedCat[cat.id];
+    let html=\`<div class="cat-card \${open?"open":""}" id="cat-\${cat.id}" onclick="toggleCat('\${cat.id}')">
+      <div class="cat-inner">
+        <div class="cat-ico" style="background:\${cat.color}22">\${cat.icon}</div>
+        <div><div class="cat-name">\${cat.name[lang]||cat.name.fr}</div>
+        <div class="cat-cnt">\${cat.subs.reduce((t,s)=>t+s.progs.length,0)} programmes</div></div>
+        <div class="cat-arr">›</div>
+      </div>
+    </div>\`;
+    if(open){
+      html+=\`<div class="sub-wrap">\`;
+      cat.subs.forEach(sub=>{
+        const subOpen=selectedSub[sub.id];
+        html+=\`<div class="sub-card" onclick="toggleSub('\${sub.id}')">
+          <span class="sub-arr">\${subOpen?"▲":"▼"}</span>
+          <div class="sub-name">\${sub.icon} \${sub.name[lang]||sub.name.fr}</div>
+          <div class="sub-cnt">\${sub.progs.length} programmes</div>
+        </div>\`;
+        if(subOpen){
+          html+=\`<div class="mod-list">\`;
+          Object.values(programs).filter(p=>p.subId===sub.id).forEach(p=>{
+            html+=\`<div class="mod-item" onclick="\${p.enrolled?"openCourse":"openPay"}('\${p.id}')">
+              <div class="mod-dot" style="background:\${cat.accent}"></div>
+              <div class="mod-name">\${p.title}</div>
+              \${p.enrolled?\`<div class="mod-ok">✓\${p.progress}%</div>\`:\`<div class="mod-price">\${p.price.toLocaleString()} F</div>\`}
+            </div>\`;
+          });
+          html+=\`</div>\`;
+        }
+      });
+      html+=\`</div>\`;
+    }
+    return html;
+  }).join("");
+
+  return \`
+    <div class="hero">
+      <div class="hero-name">\${lang==="fr"?"Bienvenue,":"Welcome,"}</div>
+      <div class="hero-user">\${userName}</div>
+      <div class="hero-row">
+        <div class="hero-stat"><div class="hero-val">\${pct}%</div><div class="hero-lbl">Progression</div></div>
+        <div class="hero-stat"><div class="hero-val">\${enrolled.length}</div><div class="hero-lbl">Inscrits</div></div>
+        <div class="hero-stat"><div class="hero-val">\${done}</div><div class="hero-lbl">Terminés</div></div>
+        <div class="hero-stat"><div class="hero-val">3</div><div class="hero-lbl">Badges</div></div>
+      </div>
+    </div>
+    <div class="counter">
+      <div><div class="ctr-v">2 500+</div><div class="ctr-l">Apprenants</div></div>
+      <div><div class="ctr-v">890+</div><div class="ctr-l">Certifiés</div></div>
+      <div><div class="ctr-v">12+</div><div class="ctr-l">Partenaires</div></div>
+      <div><div class="ctr-v">80+</div><div class="ctr-l">Programmes</div></div>
+    </div>
+    <div class="sec"><div class="sec-h">📰 Actualités ALC</div></div>
+    <div class="news-row">
+      <div class="news-card"><div class="news-img" style="background:#1B2D5B22">🚀</div><div class="news-body"><div class="news-tag2">Carrière</div><div class="news-title">Réussir sa reconversion professionnelle en 2025</div><div class="news-date">8 Mars 2025</div></div></div>
+      <div class="news-card"><div class="news-img" style="background:#1A5C3522">🌍</div><div class="news-body"><div class="news-tag2">Formation</div><div class="news-title">L\'avenir de la formation en Afrique</div><div class="news-date">2 Mars 2025</div></div></div>
+      <div class="news-card"><div class="news-img" style="background:#8B1A1A22">💼</div><div class="news-body"><div class="news-tag2">Leadership</div><div class="news-title">5 compétences pour managers africains</div><div class="news-date">25 Fév 2025</div></div></div>
+    </div>
+    <div class="sec" style="margin-bottom:10px"><div class="sec-h">\${lang==="fr"?"Notre Catalogue":"Our Catalogue"}</div><div class="sec-s">Explorez nos formations</div></div>
+    \${cats}
+    <div class="promo">
+      <div class="promo-t">🚀 Prochaine Cohorte — Mars 2025</div>
+      <div class="promo-s">Inscriptions ouvertes ! Rejoignez des centaines d\'apprenants.</div>
+      <button class="promo-btn2" onclick="window.open(CONTACTS.whatsapp,'_blank')">S\'inscrire via WhatsApp →</button>
+    </div>
+  \`;
+}
+
+function toggleCat(id){selectedCat[id]=!selectedCat[id];render();}
+function toggleSub(id){selectedSub[id]=!selectedSub[id];render();}
+
+// ═══ LEARN ═══
+function renderLearn(){
+  const pathNodes=[
+    {name:"Évaluation diagnostique",status:"done",icon:"🎯",pct:100},
+    {name:"Module fondamental",status:"done",icon:"📚",pct:100},
+    {name:"Module de spécialisation",status:"active",icon:"⚙️",pct:45},
+    {name:"Atelier pratique",status:"locked",icon:"🔧",pct:0},
+    {name:"Évaluation finale",status:"locked",icon:"📝",pct:0},
+    {name:"Certification",status:"locked",icon:"🎓",pct:0}
+  ];
+  const statusColor={done:"#1A7A4A",active:"#C9A84C",locked:"#A0AEC0"};
+  const statusTxt={done:"✅ Complété",active:"🔥 En cours",locked:"🔒 Verrouillé"};
+  return \`
+    <div class="sec" style="margin-bottom:12px"><div class="sec-h">📚 \${lang==="fr"?"Apprendre":"Learn"}</div></div>
+    <div style="margin:0 14px 14px;padding:17px;border-radius:15px;background:linear-gradient(135deg,#1B2D5B,#2A468A)">
+      <div style="color:#C9A84C;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase">Nouveau</div>
+      <div style="font-family:'Playfair Display',serif;font-size:15px;color:#fff;font-weight:700;margin:6px 0 7px">\${lang==="fr"?"Évaluation Diagnostique":"Diagnostic Test"}</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;margin-bottom:11px">Découvrez le parcours adapté à votre niveau actuel.</div>
+      <button class="promo-btn2" onclick="currentTab='more';moreSection='diagnostic';render()">Commencer le test →</button>
+    </div>
+    <div class="card">
+      <div class="card-t">🗺️ \${lang==="fr"?"Parcours d\'Apprentissage":"Learning Path"}</div>
+      <div style="padding:14px">
+        \${pathNodes.map((n,i)=>\`
+          <div class="path-node" style="padding-bottom:4px">
+            <div class="path-circ \${n.status}" style="font-size:16px">\${n.icon}</div>
+            <div style="flex:1">
+              <div class="path-name">\${n.name}</div>
+              <div class="path-status" style="color:\${statusColor[n.status]}">\${statusTxt[n.status]}</div>
+            </div>
+            \${n.pct>0?\`<div style="font-size:13px;font-weight:800;color:#C9A84C">\${n.pct}%</div>\`:""}
+          </div>
+        \`).join("")}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">🎬 \${lang==="fr"?"Vidéos de Cours":"Course Videos"}</div>
+      \${[
+        {t:"Introduction à la Communication Stratégique",d:"28 min",e:"📡"},
+        {t:"Les fondamentaux du Leadership en Afrique",d:"35 min",e:"👑"},
+        {t:"Techniques d\'animation de séminaire",d:"22 min",e:"🎙️"}
+      ].map(v=>\`
+        <div style="padding:11px 14px;border-bottom:1px solid #F0F2F8;cursor:pointer" onclick="window.open(CONTACTS.youtube,'_blank')">
+          <div style="height:85px;border-radius:10px;background:linear-gradient(135deg,#0D1B2A,#1B2D5B);display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:7px;position:relative">
+            \${v.e}
+            <div style="position:absolute;width:38px;height:38px;border-radius:50%;background:rgba(201,168,76,.9);display:flex;align-items:center;justify-content:center;font-size:13px">▶</div>
+          </div>
+          <div style="font-weight:700;font-size:12px;color:#1B2D5B">\${v.t}</div>
+          <div style="font-size:10px;color:#A0AEC0;margin-top:2px">⏱️ \${v.d}</div>
+        </div>
+      \`).join("")}
+    </div>
+    <div class="card">
+      <div class="card-t">📖 \${lang==="fr"?"Bibliothèque PDF":"PDF Library"}</div>
+      \${LIBRARY.map(l=>\`
+        <div class="lib-item">
+          <div class="lib-ico" style="background:\${l.color}18">\${l.icon}</div>
+          <div style="flex:1"><div class="lib-name">\${l.name}</div><div style="font-size:10px;color:#A0AEC0">\${l.size}</div></div>
+          <button style="background:#1B2D5B;border:none;border-radius:8px;padding:5px 10px;color:#fff;font-size:10px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ PDF</button>
+        </div>
+      \`).join("")}
+    </div>
+    <div class="card">
+      <div class="card-t">📅 \${lang==="fr"?"Calendrier":"Calendar"}</div>
+      \${CALENDAR.map(c=>\`
+        <div class="cal-item">
+          <div style="width:36px;flex-shrink:0;text-align:center">
+            <div class="cal-day2">\${c.day}</div>
+            <div class="cal-mo">\${c.mo}</div>
+          </div>
+          <div style="flex:1"><div class="cal-name">\${c.name}</div><div class="cal-time2">⏰ \${c.time}</div></div>
+          <div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:\${c.tc}18;color:\${c.tc}">\${c.type}</div>
+        </div>
+      \`).join("")}
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-t">📋 \${lang==="fr"?"Réserver une Session":"Book a Session"}</div>
+      <div style="padding:10px 14px 14px">
+        \${SESSIONS.map((s,i)=>\`
+          <div style="border:2px solid \${bookSession===i?"#C9A84C":"#E8EEF6"};border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;\${bookSession===i?"background:rgba(201,168,76,.05)":""}" onclick="bookSession=\${i};render()">
+            <div style="font-weight:700;font-size:13px;color:#1B2D5B">\${s.date}</div>
+            <div style="font-size:11px;color:#718096;margin-top:2px">⏰ \${s.time} · 📍 Abidjan Songon</div>
+            <div style="font-size:10.5px;color:#1A7A4A;font-weight:700;margin-top:4px">✅ \${s.spots} places</div>
+          </div>
+        \`).join("")}
+        \${bookSession>=0?\`<button class="btn-gold" onclick="window.open(CONTACTS.whatsapp,'_blank')">Confirmer via WhatsApp</button>\`:""}
+      </div>
+    </div>
+  \`;
+}
+
+// ═══ DASHBOARD ═══
+function renderDash(){
+  const enrolled=Object.values(programs).filter(p=>p.enrolled);
+  const pct=enrolled.length?Math.round(enrolled.reduce((s,p)=>s+p.progress,0)/enrolled.length):0;
+  const done=enrolled.filter(p=>p.progress===100);
+  const inProgress=enrolled.filter(p=>p.progress>0&&p.progress<100);
+  const maxBar=Math.max(...GRAPH);
+  return \`
+    <div class="sec" style="margin-bottom:12px"><div class="sec-h">📊 \${lang==="fr"?"Mon Suivi":"My Progress"}</div></div>
+    <div class="dash-grid">
+      <div class="dash-card"><div class="dash-ico">📈</div><div class="dash-val">\${pct}%</div><div class="dash-lbl">Progression</div></div>
+      <div class="dash-card"><div class="dash-ico">📚</div><div class="dash-val">\${enrolled.length}</div><div class="dash-lbl">Inscrits</div></div>
+      <div class="dash-card"><div class="dash-ico">🔥</div><div class="dash-val">\${inProgress.length}</div><div class="dash-lbl">En cours</div></div>
+      <div class="dash-card"><div class="dash-ico">✅</div><div class="dash-val">\${done.length}</div><div class="dash-lbl">Terminés</div></div>
+    </div>
+    <div class="graph-box">
+      <div class="graph-t">📊 Évolution de ma progression</div>
+      <div class="bar-wrap">
+        \${GRAPH.map((v,i)=>\`
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+            <div class="bar2" style="height:\${(v/maxBar)*100}%;width:100%"></div>
+            <div class="bar-l">S\${i+1}</div>
+          </div>
+        \`).join("")}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">🏆 \${lang==="fr"?"Mes Badges":"My Badges"}</div>
+      <div class="badge-row2">
+        \${BADGES.map(b=>\`
+          <div class="badge-item">
+            <div class="badge-circ \${b.earned?"earned":"locked"}">\${b.icon}</div>
+            <div class="badge-nm">\${b.name}</div>
+          </div>
+        \`).join("")}
+      </div>
+    </div>
+    \${enrolled.length===0?\`
+      <div style="text-align:center;padding:30px 20px">
+        <div style="font-size:50px;margin-bottom:12px">📚</div>
+        <div style="font-weight:700;font-size:15px;color:#1B2D5B;margin-bottom:6px">Aucune formation inscrite</div>
+        <div style="font-size:12px;color:#718096;margin-bottom:16px">Explorez le catalogue pour commencer</div>
+        <button class="btn-gold" style="width:auto;padding:11px 26px" onclick="goTab('home')">Explorer le catalogue</button>
+      </div>
+    \`:\`
+      <div class="sec" style="margin-bottom:8px"><div class="sec-h" style="font-size:15px">Mes formations</div></div>
+      \${enrolled.map(p=>\`
+        <div class="enr-item" onclick="openCourse('\${p.id}')">
+          <div style="flex:1">
+            <div class="enr-title">\${p.title}</div>
+            <div class="enr-sub">\${p.catIcon} \${p.catName[lang]||p.catName.fr}</div>
+            <div style="height:4px;background:#E8EEF6;border-radius:3px;margin-top:6px;overflow:hidden;width:120px">
+              <div style="height:100%;background:#C9A84C;width:\${p.progress}%;border-radius:3px"></div>
+            </div>
+          </div>
+          <div class="enr-pct">\${p.progress}%</div>
+        </div>
+      \`).join("")}
+      \${done.length>0?\`
+        <div class="sec" style="margin-bottom:8px"><div class="sec-h" style="font-size:15px">🎓 Mes Certificats</div></div>
+        \${done.map(p=>\`
+          <div class="enr-item" style="border-left-color:#1A7A4A" onclick="certCourse=programs['\${p.id}'];currentTab='cert';render()">
+            <div><div class="enr-title">\${p.title}</div><div class="enr-sub">✅ Terminé · Certifié ALC</div></div>
+            <div style="font-size:11px;color:#1A7A4A;font-weight:700">Voir →</div>
+          </div>
+        \`).join("")}
+      \`:""}
+    \`}
+  \`;
+}
+
+// ═══ COMMUNITY ═══
+function renderCommunity(){
+  const tabs=[
+    {k:"forum",l:"💬 Forum"},{k:"testimonials",l:"⭐ Témoignages"},
+    {k:"alumni",l:"🎓 Diplômés"},{k:"jobs",l:"💼 Emploi"},
+    {k:"partners",l:"🤝 Partenaires"},{k:"trainers",l:"👨‍🏫 Formateurs"}
+  ];
+  let content="";
+  if(communityTab==="forum"){
+    content=\`
+      <div style="padding:0 14px 14px">
+        <div style="background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(27,45,91,.06)">
+          <textarea id="newPostInput" class="forum-in" style="height:64px;margin-bottom:8px" placeholder="Posez votre question à la communauté ALC…"></textarea>
+          <div style="text-align:right">
+            <button class="btn-gold" style="width:auto;padding:8px 18px;font-size:12px" onclick="submitPost()">Publier</button>
+          </div>
+        </div>
+        \${posts.map(p=>\`
+          <div class="forum-post">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+              <div class="post-av" style="background:\${p.color}">\${p.av}</div>
+              <div><div class="post-author">\${p.author}</div><div class="post-meta">\${p.cat} · \${p.time}</div></div>
+            </div>
+            <div class="post-text">\${p.text}</div>
+            \${p.replies.map(r=>\`
+              <div class="post-reply" \${r.isProf?"style='border-left-color:#1B2D5B'":" "}>
+                <div class="reply-author">\${r.av} \${r.author} \${r.isProf?"👨‍🏫":""}</div>
+                <div class="reply-text">\${r.text}</div>
+              </div>
+            \`).join("")}
+            <div style="display:flex;gap:7px;margin-top:7px">
+              <input id="reply-\${p.id}" class="forum-in" placeholder="Répondre…" style="height:auto;padding:7px 10px;flex:1">
+              <button style="background:#1B2D5B;border:none;border-radius:9px;padding:7px 12px;color:#fff;font-size:13px;cursor:pointer" onclick="submitReply(\${p.id})">↩</button>
+            </div>
+          </div>
+        \`).join("")}
+      </div>
+    \`;
+  } else if(communityTab==="testimonials"){
+    content=\`<div style="padding:0 14px 14px">
+      \${TESTIMONIALS.map(t=>\`
+        <div class="testi-card">
+          <div class="testi-q">"</div>
+          <div class="testi-txt">\${t.text}</div>
+          <div style="color:#C9A84C;font-size:14px;margin-bottom:6px">★★★★★</div>
+          <div style="font-size:10px;color:#C9A84C;font-weight:700;margin-bottom:10px">Module : \${t.prog}</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="testi-av" style="background:\${t.color}">\${t.name.split(" ").map(n=>n[0]).join("")}</div>
+            <div><div class="testi-name">\${t.name}</div><div class="testi-role">\${t.role}</div></div>
+          </div>
+        </div>
+      \`).join("")}
+    </div>\`;
+  } else if(communityTab==="alumni"){
+    content=\`<div class="card" style="margin:0 14px 14px">
+      \${ALUMNI.map(a=>\`
+        <div class="alumni-item">
+          <div style="width:38px;height:38px;border-radius:50%;background:\${a.color};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff;flex-shrink:0">\${a.name.split(" ").map(n=>n[0]).join("")}</div>
+          <div><div style="font-weight:700;font-size:12.5px;color:#1B2D5B">\${a.name}</div><div style="font-size:10.5px;color:#718096">\${a.role} · \${a.co}</div>
+          <div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EEF0F8;color:#1B2D5B;display:inline-block;margin-top:3px">\${a.cert}</div></div>
+        </div>
+      \`).join("")}
+    </div>\`;
+  } else if(communityTab==="jobs"){
+    content=\`<div class="card" style="margin:0 14px">
+      \${JOBS.map(j=>\`
+        <div class="job-item">
+          <div class="job-title">\${j.title}</div>
+          <div class="job-co">🏢 \${j.co} · 📍 \${j.loc}</div>
+          <div class="job-tags">
+            \${j.tags.map(tag=>\`<span class="tag" style="background:#EEF0F8;color:#1B2D5B">\${tag}</span>\`).join("")}
+            <span class="tag" style="background:#1B2D5B18;color:#1B2D5B">\${j.type}</span>
+          </div>
+        </div>
+      \`).join("")}
+      <div style="padding:10px 14px 14px"><button class="btn-gold" onclick="window.open(CONTACTS.whatsapp,'_blank')">Envoyer mon CV via WhatsApp</button></div>
+    </div>\`;
+  } else if(communityTab==="partners"){
+    const partners=[
+      {name:"PNUD Côte d\'Ivoire",desc:"Programme des Nations Unies",icon:"🌍",color:"#1B2D5B"},
+      {name:"Chambre de Commerce CI",desc:"Partenaire institutionnel",icon:"🏛️",color:"#8B6B28"},
+      {name:"Orange Business CI",desc:"Partenaire technologique",icon:"📱",color:"#E67E22"},
+      {name:"Ministère de l\'Emploi",desc:"Partenaire certification officielle",icon:"📋",color:"#1A5C35"}
+    ];
+    content=\`<div class="card" style="margin:0 14px">
+      \${partners.map(p=>\`
+        <div style="display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid #F0F2F8">
+          <div style="width:42px;height:42px;border-radius:10px;background:\${p.color}18;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">\${p.icon}</div>
+          <div><div style="font-weight:700;font-size:12.5px;color:#1B2D5B">\${p.name}</div><div style="font-size:10.5px;color:#718096">\${p.desc}</div></div>
+        </div>
+      \`).join("")}
+    </div>\`;
+  } else if(communityTab==="trainers"){
+    content=\`<div style="padding:0 14px 14px">
+      \${TRAINERS.map(tr=>\`
+        <div class="trainer-card">
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:9px">
+            <div class="trainer-av" style="background:\${tr.color}">\${tr.icon}</div>
+            <div><div class="trainer-name">\${tr.name}</div><div class="trainer-title">\${tr.title}</div><div class="trainer-exp">\${tr.exp} d\'expérience · ⭐ \${tr.rating}</div></div>
+          </div>
+        </div>
+      \`).join("")}
+    </div>\`;
+  }
+  return \`
+    <div class="sec" style="margin-bottom:10px"><div class="sec-h">👥 Communauté</div></div>
+    <div class="comm-tabs">
+      \${tabs.map(t=>\`<button class="comm-tab \${communityTab===t.k?"on":""}" onclick="communityTab='\${t.k}';render()">\${t.l}</button>\`).join("")}
+    </div>
+    \${content}
+  \`;
+}
+
+function submitPost(){
+  const input=document.getElementById("newPostInput");
+  if(!input||!input.value.trim()) return;
+  posts.unshift({id:Date.now(),author:"KP",av:"KP",color:"#1B2D5B",cat:"Général",time:"À l\'instant",text:input.value,replies:[]});
+  render();
+}
+
+function submitReply(postId){
+  const input=document.getElementById("reply-"+postId);
+  if(!input||!input.value.trim()) return;
+  const post=posts.find(p=>p.id===postId);
+  if(post) post.replies.push({av:"KP",author:"Moi",text:input.value,time:"À l\'instant",isProf:false});
+  render();
+}
+
+// ═══ NOTIFICATIONS ═══
+function renderNotifs(){
+  const unread=notifs.filter(n=>n.unread).length;
+  return \`
+    <div class="sec" style="margin-bottom:8px">
+      <div class="sec-h">🔔 \${lang==="fr"?"Notifications":"Notifications"}</div>
+      <div class="sec-s">\${unread} non lu(s)</div>
+    </div>
+    <div style="text-align:right;padding:0 14px 8px">
+      <button style="background:none;border:none;color:#C9A84C;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="markAllRead()">Tout marquer comme lu</button>
+    </div>
+    <div class="card">
+      \${notifs.map(n=>\`
+        <div class="notif-item \${n.unread?"unread":""}" onclick="readNotif(\${n.id})">
+          <div class="notif-ico" style="background:\${n.bg}">\${n.icon}</div>
+          <div style="flex:1">
+            <div class="notif-title">\${n.title}</div>
+            <div class="notif-txt">\${n.text}</div>
+            <div class="notif-time">\${n.time}</div>
+          </div>
+          \${n.unread?\`<div class="notif-dot2"></div>\`:""}
+        </div>
+      \`).join("")}
+    </div>
+  \`;
+}
+
+function markAllRead(){notifs.forEach(n=>n.unread=false);updateNotifBadge();render();}
+function readNotif(id){const n=notifs.find(x=>x.id===id);if(n){n.unread=false;updateNotifBadge();render();}}
+
+// ═══ AI CHAT ═══
+function renderAI(){
+  const sugs=["C\'est quoi ALC ?","Comment s\'inscrire ?","Modes de paiement","Nos certifications","Contactez-nous"];
+  const msgs=aiMessages.map(m=>\`
+    <div class="ai-msg \${m.role}">
+      <div class="ai-av2 \${m.role}">\${m.role==="bot"?"🤖":"KP"}</div>
+      <div class="ai-bubble \${m.role}">\${m.text}</div>
+    </div>
+  \`).join("");
+  return \`
+    <div id="aiPage">
+      <div class="ai-header">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#1B2D5B">\${lang==="fr"?"Assistant IA ALC":"ALC AI Assistant"}</div>
+        <div style="font-size:11px;color:#718096">\${lang==="fr"?"Posez vos questions 24h/24":"Ask questions 24/7"}</div>
+      </div>
+      <div class="ai-sugs">
+        \${sugs.map(s=>\`<button class="ai-sug2" onclick="sendAI('\${s.replace(/'/g,"\\'")}')">  \${s}</button>\`).join("")}
+      </div>
+      <div class="ai-msgs" id="aiMsgs">
+        \${msgs}
+        <div id="aiAnchor"></div>
+      </div>
+      <div class="ai-input-row">
+        <input class="ai-inp" id="aiInput" placeholder="\${lang==="fr"?"Posez votre question…":"Ask your question…"}" onkeydown="if(event.key==='Enter')sendAIFromInput()">
+        <button class="ai-send" onclick="sendAIFromInput()">➤</button>
+      </div>
+    </div>
+  \`;
+}
+
+function scrollAIBottom(){setTimeout(()=>{const a=document.getElementById("aiAnchor");if(a)a.scrollIntoView({behavior:"smooth"});},100);}
+function sendAIFromInput(){const inp=document.getElementById("aiInput");if(inp)sendAI(inp.value);}
+
+async function sendAI(msg){
+  if(!msg||!msg.trim()) return;
+  aiMessages.push({role:"user",text:msg});
+  render();
+  const aiMsgsEl=document.getElementById("aiMsgs");
+  if(aiMsgsEl) aiMsgsEl.insertAdjacentHTML("beforeend",\`
+    <div class="ai-msg bot">
+      <div class="ai-av2 bot">🤖</div>
+      <div class="ai-bubble bot"><div class="ai-typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>
+    </div>
+  \`);
+  scrollAIBottom();
+  try{
+    const r=await fetch("https://api.groq.com/openai/v1/chat/completions",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+GROQ_KEY},
+      body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:400,
+        messages:[
+          {role:"system",content:"Tu es l\'Assistant IA de l\'ALC Institute, basé à Abidjan Songon, Côte d\'Ivoire. Tu réponds uniquement sur les formations, inscriptions, paiements (Orange Money +225 0777727482, Wave +225 0141234600). Sois chaleureux, concis. Réponds en "+lang===\"fr\"?"français":"anglais"+"."},
+          ...aiMessages.slice(-6).map(m=>({role:m.role==="bot"?"assistant":"user",content:m.text})),
+          {role:"user",content:msg}
+        ]})
+    });
+    const d=await r.json();
+    const reply=d.choices&&d.choices[0]?d.choices[0].message.content:"Je suis là pour vous aider ! Contactez-nous sur WhatsApp : +225 0141234600";
+    aiMessages.push({role:"bot",text:reply});
+  }catch(e){
+    aiMessages.push({role:"bot",text:"Désolé, une erreur s\'est produite. Contactez-nous via WhatsApp : +225 0141234600"});
+  }
+  render();
+}
+
+// ═══ COURSE ═══
+function openCourse(id){
+  activeCourse=programs[id];
+  if(!activeCourse) return;
+  currentTab="course";
+  quizStep=0;quizAnswers=[];quizSelected=null;quizDone=false;
+  render();
+}
+
+function openPay(id){
+  activePayCourse=programs[id];
+  if(!activePayCourse) return;
+  currentTab="pay";
+  payMethodSel="";
+  render();
+}
+
+function renderCourse(){
+  const p=activeCourse;
+  if(!p) return \`<button class="btn-back" onclick="goTab('home')">← Retour</button>\`;
+  const lessons=[
+    {t:"Introduction & Objectifs",d:"40 min",done:true},
+    {t:"Fondements & Concepts clés",d:"55 min",done:p.progress>=20},
+    {t:"Support de cours (PDF)",d:"PDF",done:p.progress>=30},
+    {t:"Approfondissement pratique",d:"35 min",done:p.progress>=50},
+    {t:"Étude de cas réel",d:"30 min",done:p.progress>=60},
+    {t:"Quiz d\'évaluation",d:"15 min",done:p.progress>=90},
+    {t:"Certification",d:"—",done:p.progress===100}
+  ];
+  return \`
+    <button class="btn-back" onclick="currentTab='home';render()">← Retour</button>
+    <div style="margin:0 14px 13px;border-radius:16px;overflow:hidden">
+      <div style="padding:20px 16px;background:linear-gradient(135deg,\${p.catColor},\${p.catColor}BB)">
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:\${p.accent};opacity:.9">\${p.catIcon} \${p.catName[lang]||p.catName.fr}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;margin:6px 0">\${p.title}</div>
+        <div style="display:flex;gap:12px;margin-bottom:9px">
+          <span style="font-size:11px;color:rgba(255,255,255,.5)">📊 \${p.level}</span>
+          <span style="font-size:11px;color:rgba(255,255,255,.5)">💰 \${p.price.toLocaleString()} FCFA</span>
+        </div>
+        <div style="height:5px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden">
+          <div style="height:100%;border-radius:3px;background:#C9A84C;width:\${p.progress}%"></div>
+        </div>
+        <div style="font-size:9.5px;color:rgba(255,255,255,.4);margin-top:3px">\${p.progress}% complété</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">📋 Contenu du cours</div>
+      \${lessons.map((l,i)=>\`
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F0F2F8">
+          <div style="width:26px;height:26px;border-radius:50%;background:\${l.done?"#1B2D5B":"#E8EEF6"};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:\${l.done?"#C9A84C":"#A0AEC0"};flex-shrink:0">\${l.done?"✓":i+1}</div>
+          <div style="flex:1;font-size:12.5px;color:#1B2D5B;font-weight:500">\${l.t}</div>
+          <div style="font-size:10px;color:#A0AEC0">\${l.d}</div>
+        </div>
+      \`).join("")}
+    </div>
+    <div style="padding:0 14px 14px;display:flex;flex-direction:column;gap:9px">
+      <button class="btn-gold" onclick="startQuiz()">🧠 Passer l\'évaluation</button>
+      \${p.progress===100?\`<button class="btn-blue" onclick="certCourse=programs['\${p.id}'];currentTab='cert';render()">🎓 Télécharger mon certificat</button>\`:""}
+    </div>
+  \`;
+}
+
+// ═══ QUIZ ═══
+function startQuiz(){quizStep=0;quizAnswers=[];quizSelected=null;quizDone=false;currentTab="quiz";render();}
+
+function renderQuiz(){
+  if(quizDone){
+    const score=quizAnswers.filter((a,i)=>a===QUIZ[i].ans).length;
+    const pct=Math.round(score/QUIZ.length*100);
+    return \`
+      <button class="btn-back" onclick="currentTab='course';render()">← Cours</button>
+      <div style="padding:20px 14px;text-align:center">
+        <div style="font-size:72px;margin-bottom:12px">\${score===QUIZ.length?"🏆":score>=3?"🎉":"💪"}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:42px;font-weight:900;color:#1B2D5B">\${score}/\${QUIZ.length}</div>
+        <div style="font-size:16px;font-weight:700;color:\${score>=3?"#1A7A4A":"#C9A84C"};margin:8px 0">\${score===QUIZ.length?"Parfait !":score>=3?"Très bien !":"Continue !"}</div>
+        <div style="font-size:13px;color:#718096;margin-bottom:22px">\${pct}% — \${score>=3?"Module validé !":"Relisez et réessayez."}</div>
+        <button class="btn-outline" style="width:100%;border:2px solid #1B2D5B;border-radius:12px;padding:12px;background:none;font-size:13px;font-weight:700;color:#1B2D5B;margin-bottom:10px;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="startQuiz()">🔄 Recommencer</button>
+        \${score>=3?\`<button class="btn-gold" onclick="completeModule()">🎓 Obtenir mon certificat</button>\`:\`<button class="btn-blue" onclick="currentTab='course';render()">Retour au cours</button>\`}
+      </div>
+    \`;
+  }
+  const q=QUIZ[quizStep];
+  return \`
+    <button class="btn-back" onclick="currentTab='course';render()">← Cours</button>
+    <div style="padding:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:9px">
+        <div style="font-size:13px;font-weight:700;color:#1B2D5B">Question \${quizStep+1}/\${QUIZ.length}</div>
+        <div style="font-size:11px;color:#718096">\${quizAnswers.filter((a,i)=>a===QUIZ[i].ans).length}/\${quizStep} correct</div>
+      </div>
+      <div style="height:4px;background:#E8EEF6;border-radius:3px;margin-bottom:16px;overflow:hidden">
+        <div style="height:100%;background:#C9A84C;width:\${(quizStep/QUIZ.length)*100}%;border-radius:3px"></div>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:#1B2D5B;margin-bottom:16px;line-height:1.4">\${q.q}</div>
+      \${q.opts.map((opt,i)=>{
+        let bg="#fff",border="#E8EEF6",color="#1B2D5B";
+        if(quizSelected!==null){
+          if(i===q.ans){bg="#E8F8EF";border="#27AE60";color="#1A7A4A";}
+          else if(i===quizSelected){bg="#FDF0EE";border="#E74C3C";color="#C0392B";}
+        }
+        const clickFn=quizSelected===null?"answerQuiz("+i+")":"";
+        return '<button onclick="'+clickFn+'" style="width:100%;padding:12px 14px;border:2px solid '+border+';border-radius:12px;background:'+bg+';text-align:left;font-size:13px;cursor:pointer;margin-bottom:8px;color:'+color+';font-weight:500;font-family:sans-serif"><b style=\'margin-right:7px\'>'+'ABCD'[i]+'.</b>'+opt+'</button>';
+      }).join("")}
+    </div>
+  \`;
+}
+
+function answerQuiz(i){
+  if(quizSelected!==null) return;
+  quizSelected=i;
+  render();
+  setTimeout(()=>{
+    quizAnswers.push(i);
+    if(quizStep+1<QUIZ.length){quizStep++;quizSelected=null;}
+    else quizDone=true;
+    render();
+  },700);
+}
+
+function completeModule(){
+  if(activeCourse){
+    programs[activeCourse.id].progress=100;
+    certCourse=programs[activeCourse.id];
+    currentTab="cert";render();
+  }
+}
+
+// ═══ PAY ═══
+function renderPay(){
+  const p=activePayCourse;
+  if(!p) return \`<button class="btn-back" onclick="goTab('home')">← Retour</button>\`;
+  const payOk=p.enrolled;
+  return \`
+    <button class="btn-back" onclick="currentTab='home';render()">← Retour</button>
+    <div style="padding:0 14px 16px">
+      \${payOk?\`
+        <div class="pay-success">
+          <div style="font-size:70px">🎉</div>
+          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:#1A7A4A;margin:12px 0 8px">Inscription confirmée !</div>
+          <div style="font-size:13px;color:#718096;margin-bottom:22px">Accès immédiat à :<br><b>\${p.title}</b></div>
+          <button class="btn-gold" onclick="openCourse('\${p.id}')">▶️ Commencer la formation</button>
+        </div>
+      \`:\`
+        <div class="card" style="margin:0 0 12px">
+          <div style="padding:16px;text-align:center">
+            <div style="font-size:11px;color:#718096">Inscription à la formation</div>
+            <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#1B2D5B;margin:5px 0 3px">\${p.title}</div>
+            <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:#1B2D5B;margin:6px 0">\${p.price.toLocaleString()} FCFA</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#718096;font-weight:700;margin-bottom:10px">💳 Mode de paiement</div>
+        \${[
+          {id:"orange",label:"Orange Money",num:CONTACTS.orange,icon:"🟠",bg:"#FF660015",border:"#FF6600"},
+          {id:"wave",label:"Wave",num:CONTACTS.wave,icon:"🔵",bg:"#2196F315",border:"#2196F3"}
+        ].map(m=>\`
+          <div class="pay-method2 \${payMethodSel===m.id?"on":""}" onclick="payMethodSel='\${m.id}';render()">
+            <div class="pay-ico2" style="background:\${m.bg}">\${m.icon}</div>
+            <div><div class="pay-nm">\${m.label}</div><div class="pay-num">\${m.num}</div></div>
+            \${payMethodSel===m.id?\`<div style="margin-left:auto;color:#C9A84C;font-size:16px">✓</div>\`:""}
+          </div>
+        \`).join("")}
+        \${payMethodSel?\`
+          <div style="margin-top:14px">
+            <div style="font-size:12px;font-weight:700;color:#1B2D5B;margin-bottom:8px">📱 Votre numéro Mobile Money</div>
+            <input class="inp" id="payPhone" placeholder="Ex : 07 00 00 00 00">
+            <div class="pay-info">
+              <div style="font-weight:700;font-size:12px;color:#8B6B28;margin-bottom:6px">Instructions :</div>
+              <div style="font-size:11.5px;color:#8B6B28;line-height:1.7">
+                1. Envoyez \${p.price.toLocaleString()} FCFA au \${payMethodSel==="orange"?CONTACTS.orange:CONTACTS.wave}<br>
+                2. Entrez votre numéro ci-dessus<br>
+                3. Confirmez le paiement
+              </div>
+            </div>
+            <button class="btn-gold" onclick="confirmPay('\${p.id}')">✅ Confirmer le paiement</button>
+          </div>
+        \`:""}
+      \`}
+    </div>
+  \`;
+}
+
+function confirmPay(id){
+  const phone=document.getElementById("payPhone");
+  if(!phone||!phone.value.trim()){alert("Veuillez entrer votre numéro");return;}
+  programs[id].enrolled=true;
+  programs[id].progress=10;
+  activePayCourse=programs[id];
+  render();
+}
+
+// ═══ CERT ═══
+function renderCert(){
+  const p=certCourse;
+  if(!p) return \`<button class="btn-back" onclick="goTab('dash')">← Retour</button>\`;
+  const num="ALC-"+p.id.toUpperCase()+"-2025";
+  const shareText="🎓 Je viens d\'obtenir ma certification en \""+p.title+"\" à l\'ALC Institute ! #ALCInstitute #Formation #Certification";
+  return \`
+    <button class="btn-back" onclick="currentTab='dash';render()">← Retour</button>
+    <div style="padding:0 14px 16px">
+      <div class="cert-card">
+        <svg viewBox="0 0 80 80" width="48" height="48" fill="none">
+          <path d="M40 4L72 18L72 50C72 64 57 74 40 78C23 74 8 64 8 50L8 18Z" fill="#1B2D5B" stroke="#C9A84C" stroke-width="2.5"/>
+          <text x="40" y="50" text-anchor="middle" fill="white" font-size="24" font-weight="bold" font-family="Georgia,serif">A</text>
+          <polygon points="40,16 43,22 49,22 44,26 46,32 40,28 34,32 36,26 31,22 37,22" fill="#C9A84C"/>
+        </svg>
+        <div style="color:#C9A84C;font-size:8.5px;letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-top:9px">ALC Institute</div>
+        <div style="font-size:10px;color:#A0AEC0;letter-spacing:2px;margin-top:2px">Formation · Impact · Influence</div>
+        <div style="font-size:12px;color:#718096;margin:13px 0 4px">Ce certificat est décerné à</div>
+        <div style="font-family:'Playfair Display',serif;font-size:21px;font-weight:900;color:#1B2D5B">\${userName}</div>
+        <div style="font-size:11px;color:#718096;margin:9px 0 5px">pour avoir complété avec succès</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#C9A84C">\${p.title}</div>
+        <hr style="border:none;border-top:1.5px solid #E8EEF6;margin:14px 0">
+        <div style="display:flex;justify-content:space-around">
+          <div style="text-align:center"><div style="font-weight:800;font-size:14px;color:#1B2D5B">2025</div><div style="font-size:9px;color:#A0AEC0">Année</div></div>
+          <div style="text-align:center"><div style="font-weight:800;font-size:10px;color:#1B2D5B">\${num}</div><div style="font-size:9px;color:#A0AEC0">Numéro</div></div>
+          <div style="text-align:center"><div style="font-weight:800;font-size:13px;color:#1B2D5B">\${p.level}</div><div style="font-size:9px;color:#A0AEC0">Niveau</div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div style="font-size:12px;font-weight:700;color:#1B2D5B;margin-bottom:9px">📤 Partager mon certificat</div>
+        <div style="display:flex;gap:8px">
+          <button class="share-btn" style="background:#1877F222;color:#1877F2" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url=https://alc-institute.com','_blank')">🔗 LinkedIn</button>
+          <button class="share-btn" style="background:#25D36622;color:#25D366" onclick="window.open('https://wa.me/?text=\${encodeURIComponent(shareText)}','_blank')">💬 WhatsApp</button>
+          <button class="share-btn" style="background:#1B2D5B22;color:#1B2D5B" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=https://alc-institute.com','_blank')">📘 Facebook</button>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn-gold" onclick="currentTab='dash';render()">← Tableau de bord</button>
+      </div>
+    </div>
+  \`;
+}
+
+// ═══ MORE ═══
+function renderMore(){
+  const menuItems=[
+    {k:"payment",icon:"💳",label:"Paiement Mobile Money",bg:"#FF660015"},
+    {k:"socials",icon:"🌐",label:"Réseaux Sociaux & Contact",bg:"#1877F215"},
+    {k:"faq",icon:"❓",label:"FAQ",bg:"#C9A84C15"},
+    {k:"regulations",icon:"📋",label:"Règlement Intérieur",bg:"#1B2D5B15"},
+    {k:"support",icon:"🎫",label:"Support & Tickets",bg:"#6B46C115"},
+    {k:"diagnostic",icon:"🎯",label:"Évaluation Diagnostique",bg:"#1A7A4A15"}
+  ];
+  let content="";
+  if(moreSection==="payment") content=renderPaySection();
+  else if(moreSection==="socials") content=renderSocials();
+  else if(moreSection==="faq") content=renderFAQ();
+  else if(moreSection==="regulations") content=renderRegs();
+  else if(moreSection==="support") content=renderSupport();
+  else if(moreSection==="diagnostic") content=renderDiag();
+  else content=renderContactCard();
+
+  return \`
+    <div class="sec" style="margin-bottom:10px"><div class="sec-h">☰ Plus</div></div>
+    \${menuItems.map(item=>\`
+      <div class="more-item" style="background:\${moreSection===item.k?item.bg:"transparent"}" onclick="moreSection=moreSection==='\${item.k}'?'':'\${item.k}';render()">
+        <div class="more-ico" style="background:\${item.bg}">\${item.icon}</div>
+        <div class="more-name">\${item.label}</div>
+        <div style="color:#CBD5E0">›</div>
+      </div>
+    \`).join("")}
+    \${content}
+  \`;
+}
+
+function renderPaySection(){
+  return \`<div style="padding:12px 14px">
+    \${[
+      {icon:"🟠",label:"Orange Money",num:CONTACTS.orange,bg:"#FF660015",border:"#FF6600"},
+      {icon:"🔵",label:"Wave",num:CONTACTS.wave,bg:"#2196F315",border:"#2196F3"}
+    ].map(m=>\`
+      <div style="background:\${m.bg};border:2px solid \${m.border}22;border-radius:13px;padding:15px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+          <span style="font-size:25px">\${m.icon}</span>
+          <div><div style="font-weight:700;font-size:14px;color:#1B2D5B">\${m.label}</div></div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-family:monospace;font-size:15px;font-weight:800;color:#1B2D5B">\${m.num}</span>
+          <button class="copy-btn2" onclick="copyNum('\${m.num.replace(/\s/g,'')}')" id="copybtn-\${m.num.replace(/\s/g,'')}">Copier</button>
+        </div>
+      </div>
+    \`).join("")}
+    <div class="pay-info">
+      <div style="font-weight:700;font-size:12px;color:#8B6B28;margin-bottom:5px">💬 Après paiement :</div>
+      <div style="font-size:11.5px;color:#8B6B28;line-height:1.6">Envoyez la capture d\'écran via WhatsApp au <b>\${CONTACTS.orange}</b></div>
+      <button style="margin-top:9px;background:#25D366;border:none;border-radius:10px;padding:9px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif" onclick="window.open(CONTACTS.whatsapp,'_blank')">📲 Envoyer confirmation WhatsApp</button>
+    </div>
+  </div>\`;
+}
+
+function copyNum(num){
+  if(navigator.clipboard) navigator.clipboard.writeText(num).then(()=>{alert("Numéro copié : "+num);});
+  else{alert("Numéro : "+num);}
+}
+
+function renderSocials(){
+  return \`<div style="padding:12px 14px">
+    <div class="social-grid">
+      <button class="soc-btn" style="background:#1877F215;color:#1877F2" onclick="window.open(CONTACTS.facebook,'_blank')"><span class="soc-ico">📘</span>Facebook</button>
+      <button class="soc-btn" style="background:#E1306C15;color:#E1306C" onclick="window.open(CONTACTS.instagram,'_blank')"><span class="soc-ico">📸</span>Instagram</button>
+      <button class="soc-btn" style="background:#FF000015;color:#FF0000" onclick="window.open(CONTACTS.youtube,'_blank')"><span class="soc-ico">▶️</span>YouTube</button>
+      <button class="soc-btn" style="background:#0088CC15;color:#0088CC" onclick="window.open(CONTACTS.telegram,'_blank')"><span class="soc-ico">✈️</span>Telegram</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <button style="background:#25D36615;border:2px solid #25D36622;border-radius:12px;padding:13px;display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif" onclick="window.open(CONTACTS.whatsapp,'_blank')">
+        <span style="font-size:24px">💬</span><div style="text-align:left"><div style="font-weight:700;font-size:13px;color:#128C7E">WhatsApp</div><div style="font-size:11px;color:#718096">\${CONTACTS.wave}</div></div>
+      </button>
+      <button style="background:#FF4E4E15;border:2px solid #FF4E4E22;border-radius:12px;padding:13px;display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif" onclick="window.open(CONTACTS.email,'_blank')">
+        <span style="font-size:24px">✉️</span><div style="text-align:left"><div style="font-weight:700;font-size:13px;color:#C0392B">Email</div><div style="font-size:11px;color:#718096">ecole.alc@gmail.com</div></div>
+      </button>
+      <button style="background:#1B2D5B15;border:2px solid #1B2D5B22;border-radius:12px;padding:13px;display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif" onclick="window.open(CONTACTS.maps,'_blank')">
+        <span style="font-size:24px">📍</span><div style="text-align:left"><div style="font-weight:700;font-size:13px;color:#1B2D5B">Localisation</div><div style="font-size:11px;color:#718096">Abidjan Songon, Côte d\'Ivoire</div></div>
+      </button>
+    </div>
+  </div>\`;
+}
+
+function renderFAQ(){
+  return \`<div style="padding:12px 14px">
+    \${FAQ.map((f,i)=>\`
+      <div class="faq-item">
+        <div class="faq-q" onclick="faqOpen=faqOpen===\${i}?-1:\${i};render()">
+          <span>\${f.q}</span><span style="color:#C9A84C;flex-shrink:0">\${faqOpen===i?"▲":"▼"}</span>
+        </div>
+        \${faqOpen===i?\`<div class="faq-a">\${f.a}</div>\`:""}
+      </div>
+    \`).join("")}
+  </div>\`;
+}
+
+function renderRegs(){
+  return \`<div style="padding:12px 14px">
+    \${REGS.map(r=>\`
+      <div class="reg-art">
+        <div class="reg-art-t">\${r.t}</div>
+        <div class="reg-art-s">\${r.s}</div>
+      </div>
+    \`).join("")}
+  </div>\`;
+}
+
+function renderSupport(){
+  return \`<div style="padding:12px 14px">
+    <div style="background:#fff;border-radius:12px;padding:13px;margin-bottom:12px;box-shadow:0 2px 8px rgba(27,45,91,.06)">
+      <div style="font-weight:700;font-size:13px;color:#1B2D5B;margin-bottom:9px">🎫 Nouveau ticket</div>
+      <input class="inp" id="ticketInput" placeholder="Décrivez votre problème…">
+      <button class="btn-gold" onclick="submitTicket()">Envoyer le ticket</button>
+    </div>
+    <div style="font-weight:700;font-size:13px;color:#1B2D5B;margin-bottom:9px">Mes tickets</div>
+    \${tickets.map(t=>\`
+      <div class="ticket-item">
+        <div style="font-weight:700;font-size:13px;color:#1B2D5B">\${t.title}</div>
+        <div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:\${t.color}18;color:\${t.color};display:inline-block;margin-top:4px">\${t.status}</div>
+        <div style="font-size:10px;color:#A0AEC0;margin-top:4px">📅 \${t.date}</div>
+      </div>
+    \`).join("")}
+  </div>\`;
+}
+
+function submitTicket(){
+  const inp=document.getElementById("ticketInput");
+  if(!inp||!inp.value.trim()) return;
+  tickets.unshift({id:Date.now(),title:inp.value,status:"En attente",date:new Date().toLocaleDateString("fr-FR"),color:"#C9A84C"});
+  render();
+}
+
+function renderDiag(){
+  const levels=[
+    {icon:"🌱",name:"Débutant",desc:"Je commence, peu ou pas d\'expérience.",color:"#1A7A4A"},
+    {icon:"⚙️",name:"Intermédiaire",desc:"J\'ai des bases solides et souhaite approfondir.",color:"#C9A84C"},
+    {icon:"🏆",name:"Avancé",desc:"J\'ai une expérience significative.",color:"#6B46C1"}
+  ];
+  return \`<div style="padding:14px 14px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B2D5B;margin-bottom:6px">🎯 Évaluation Diagnostique</div>
+    <div style="font-size:12.5px;color:#718096;line-height:1.5;margin-bottom:18px">Sélectionnez votre niveau pour un parcours adapté.</div>
+    \${levels.map((l,i)=>\`
+      <div class="level-card \${diagLevel===i?"on":""}" onclick="diagLevel=\${i};render()">
+        <div style="font-size:28px;margin-bottom:7px">\${l.icon}</div>
+        <div style="font-weight:700;font-size:14px;color:\${l.color}">\${l.name}</div>
+        <div style="font-size:12px;color:#718096;margin-top:3px;line-height:1.4">\${l.desc}</div>
+      </div>
+    \`).join("")}
+    \${diagLevel>=0?\`<button class="btn-gold" style="margin-top:4px" onclick="moreSection='';currentTab='learn';render()">Voir mon parcours recommandé →</button>\`:""}
+  </div>\`;
+}
+
+function renderContactCard(){
+  return \`<div style="padding:0 14px 20px;margin-top:12px">
+    <div style="background:linear-gradient(135deg,#0D1B2A,#1B2D5B);border-radius:17px;padding:20px;text-align:center">
+      <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:5px">ALC Institute</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:13px">Formation · Impact · Influence</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.6);line-height:2.1">
+        📍 Abidjan Songon, Côte d\'Ivoire<br>✉️ ecole.alc@gmail.com<br>💬 \${CONTACTS.wave}<br>🟠 \${CONTACTS.orange}
+      </div>
+      <div style="display:flex;justify-content:center;gap:18px;margin-top:15px;font-size:24px">
+        <span onclick="window.open(CONTACTS.facebook,'_blank')" style="cursor:pointer">📘</span>
+        <span onclick="window.open(CONTACTS.instagram,'_blank')" style="cursor:pointer">📸</span>
+        <span onclick="window.open(CONTACTS.youtube,'_blank')" style="cursor:pointer">▶️</span>
+        <span onclick="window.open(CONTACTS.telegram,'_blank')" style="cursor:pointer">✈️</span>
+      </div>
+    </div>
+  </div>\`;
+}
+
+// Prevent btn-back inline style issue
+document.addEventListener("DOMContentLoaded",function(){
+  const s=document.createElement("style");
+  s.textContent=\`.btn-back{background:none;border:none;color:#718096;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;padding:12px 14px 4px;font-family:'DM Sans',sans-serif}\`;
+  document.head.appendChild(s);
+});
+</script>
+</body>
+</html>
