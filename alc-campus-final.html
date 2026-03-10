@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ALC Digital Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; overflow:hidden; }
+body { font-family:'DM Sans', sans-serif; background:#0D1B2A; color:#1B2D5B; }
+:root {
+  --blue: #1B2D5B; --blue-dark: #0D1B2A; --blue-mid: #2A468A;
+  --gold: #C9A84C; --gold-light: #F0D98C; --gold-dim: #8B6B28;
+  --bg: #F2F5FA; --white: #FFFFFF;
+  --green: #1A7A4A; --red: #C0392B;
+  --shadow: 0 4px 24px rgba(13,27,42,0.13);
+}
+#root { height:100%; }
+
+/* ── SPLASH ── */
+.splash {
+  position:fixed; inset:0; background:var(--blue-dark);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999;
+  animation: splashOut 0.5s ease 2s forwards;
+}
+@keyframes splashOut { to { opacity:0; pointer-events:none; } }
+.splash-logo { font-family:'Playfair Display', serif; font-size:48px; color:var(--gold); font-weight:900; letter-spacing:2px; animation: fadeUp 0.8s ease; }
+.splash-sub { color:rgba(201,168,76,0.6); font-size:11px; letter-spacing:5px; text-transform:uppercase; margin-top:8px; animation: fadeUp 0.8s ease 0.2s both; }
+.splash-bar { width:120px; height:2px; background:rgba(201,168,76,0.2); border-radius:2px; margin-top:32px; overflow:hidden; }
+.splash-fill { height:100%; background:var(--gold); animation: fillBar 2s ease forwards; }
+@keyframes fillBar { from{width:0} to{width:100%} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── APP SHELL ── */
+.app { 
+  max-width:480px; margin:0 auto; height:100vh;
+  display:flex; flex-direction:column; background:var(--bg); position:relative; overflow:hidden;
+}
+
+/* ── HEADER ── */
+.hdr {
+  background:linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 100%);
+  padding:14px 18px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:3px solid var(--gold); flex-shrink:0;
+  box-shadow:0 4px 20px rgba(13,27,42,0.4);
+}
+.hdr-brand { display:flex; align-items:center; gap:10px; }
+.hdr-logo { width:38px; height:38px; }
+.hdr-title { color:var(--white); font-family:'Playfair Display',serif; font-size:17px; font-weight:900; letter-spacing:0.5px; line-height:1.1; }
+.hdr-sub { color:var(--gold); font-size:7.5px; letter-spacing:3px; text-transform:uppercase; }
+.hdr-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-light)); display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--blue); font-size:14px; border:2px solid rgba(201,168,76,0.4); }
+
+/* ── SCROLL AREA ── */
+.page { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:76px; }
+.page::-webkit-scrollbar { width:0; }
+
+/* ── BOTTOM NAV ── */
+.nav {
+  position:absolute; bottom:0; left:0; right:0; height:66px;
+  background:var(--white); border-top:1px solid #E0E6F0;
+  display:flex; align-items:stretch; box-shadow:0 -4px 24px rgba(27,45,91,0.08);
+}
+.nav-btn {
+  flex:1; border:none; background:none; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:3px; cursor:pointer;
+  color:#A0AEC0; font-size:9.5px; font-weight:700; letter-spacing:0.3px;
+  transition:color 0.2s; position:relative;
+}
+.nav-btn.on { color:var(--gold); }
+.nav-btn.on::before { content:''; position:absolute; top:0; left:20%; right:20%; height:2.5px; background:var(--gold); border-radius:0 0 4px 4px; }
+.nav-icon { font-size:21px; line-height:1; }
+
+/* ── SECTION TITLES ── */
+.sec { padding:20px 16px 0; }
+.sec-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--blue); }
+.sec-sub { font-size:12px; color:#718096; margin-top:2px; }
+
+/* ── HERO CARD ── */
+.hero {
+  margin:16px; padding:22px 20px; border-radius:20px;
+  background:linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 60%, var(--blue-mid) 100%);
+  box-shadow:var(--shadow);
+}
+.hero-name { color:rgba(255,255,255,0.6); font-size:12px; }
+.hero-user { color:var(--white); font-family:'Playfair Display',serif; font-size:19px; font-weight:700; margin-top:2px; }
+.hero-row { display:flex; gap:12px; margin-top:16px; }
+.hero-stat { flex:1; background:rgba(255,255,255,0.08); border-radius:12px; padding:12px 10px; text-align:center; }
+.hero-stat-val { color:var(--gold); font-size:22px; font-weight:900; font-family:'Playfair Display',serif; }
+.hero-stat-lbl { color:rgba(255,255,255,0.5); font-size:9.5px; letter-spacing:0.5px; margin-top:2px; }
+
+/* ── FILIERE CARDS ── */
+.fil-card {
+  margin:0 16px 12px; padding:14px 16px; border-radius:16px; background:var(--white);
+  box-shadow:0 2px 12px rgba(27,45,91,0.07); border-left:5px solid var(--gold);
+  cursor:pointer; transition:transform 0.15s, box-shadow 0.15s;
+}
+.fil-card:active { transform:scale(0.98); }
+.fil-card-inner { display:flex; align-items:center; gap:14px; }
+.fil-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.fil-label { font-weight:700; font-size:14px; color:var(--blue); }
+.fil-count { font-size:11px; color:#718096; margin-top:2px; }
+.fil-arrow { margin-left:auto; color:#CBD5E0; font-size:18px; }
+.fil-open .fil-arrow { color:var(--gold); transform:rotate(90deg); }
+
+/* ── SUB CARDS (filière développée) ── */
+.sub-wrap { margin:0 16px 4px; padding:0 0 4px 16px; border-left:2px solid rgba(201,168,76,0.25); }
+.sub-card {
+  background:#F8FAFC; border-radius:12px; padding:10px 14px; margin-bottom:8px;
+  cursor:pointer; border:1.5px solid #E8EEF6; transition:border-color 0.15s;
+}
+.sub-card:active { border-color:var(--gold); }
+.sub-title { font-weight:700; font-size:13px; color:var(--blue); }
+.sub-count { font-size:11px; color:#718096; }
+.sub-chev { float:right; color:#CBD5E0; }
+
+/* ── MODULE LIST ── */
+.mod-list { padding:4px 0 8px; }
+.mod-item {
+  display:flex; align-items:center; gap:10px; padding:9px 10px; margin-bottom:5px;
+  border-radius:10px; background:var(--white); border:1.5px solid #E8EEF6;
+  cursor:pointer; transition:all 0.15s;
+}
+.mod-item:active { border-color:var(--gold); background:var(--bg); }
+.mod-dot { width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+.mod-name { flex:1; font-size:12.5px; color:var(--blue); font-weight:500; }
+.mod-price { font-size:10.5px; font-weight:700; color:var(--gold); white-space:nowrap; }
+.mod-enrolled { font-size:10px; color:var(--green); font-weight:700; }
+
+/* ── BOUTONS ── */
+.btn { border:none; border-radius:12px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; transition:all 0.2s; display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+.btn-gold { background:linear-gradient(135deg,var(--gold-dim),var(--gold)); color:var(--blue-dark); padding:13px 20px; font-size:14px; width:100%; }
+.btn-gold:active { filter:brightness(0.9); }
+.btn-blue { background:linear-gradient(135deg,var(--blue),var(--blue-mid)); color:var(--white); padding:13px 20px; font-size:14px; width:100%; }
+.btn-outline { background:transparent; border:2px solid var(--blue); color:var(--blue); padding:10px 16px; font-size:13px; }
+.btn-sm { padding:6px 14px; font-size:11px; border-radius:8px; }
+.btn-back { background:none; border:none; color:#718096; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; padding:14px 16px 6px; }
+
+/* ── MODULE DETAIL ── */
+.mod-hero { margin:0 16px 16px; border-radius:18px; overflow:hidden; }
+.mod-hero-top { padding:24px 20px; }
+.mod-cat-tag { font-size:9.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; opacity:0.8; }
+.mod-hero-title { font-family:'Playfair Display',serif; font-size:21px; font-weight:700; color:var(--white); margin-top:8px; line-height:1.3; }
+.mod-meta { display:flex; gap:16px; margin-top:12px; }
+.mod-meta span { font-size:11px; color:rgba(255,255,255,0.6); }
+.progress-wrap { margin-top:12px; }
+.progress-bar { height:5px; border-radius:3px; background:rgba(255,255,255,0.2); overflow:hidden; }
+.progress-fill { height:100%; border-radius:3px; background:var(--gold); transition:width 0.4s; }
+.progress-lbl { font-size:10px; color:rgba(255,255,255,0.5); margin-top:4px; }
+
+/* ── LESSON LIST ── */
+.card { background:var(--white); border-radius:16px; margin:0 16px 14px; box-shadow:0 2px 12px rgba(27,45,91,0.07); overflow:hidden; }
+.card-title { padding:14px 16px 10px; font-weight:700; font-size:14px; color:var(--blue); border-bottom:1px solid #F0F2F8; }
+.lesson-row { display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F8F9FC; }
+.lesson-row:last-child { border-bottom:none; }
+.lesson-num { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+.lesson-num.done { background:var(--blue); color:var(--white); }
+.lesson-num.todo { background:#EEF0F6; color:#A0AEC0; }
+.lesson-name { flex:1; font-size:13px; color:var(--blue); font-weight:500; }
+.lesson-dur { font-size:11px; color:#A0AEC0; }
+
+/* ── QUIZ ── */
+.quiz-wrap { padding:16px; }
+.quiz-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.quiz-step { font-size:11px; color:#718096; font-weight:700; }
+.quiz-prog { height:5px; background:#E8EEF6; border-radius:3px; overflow:hidden; margin-bottom:20px; }
+.quiz-prog-fill { height:100%; background:var(--gold); border-radius:3px; transition:width 0.3s; }
+.quiz-q { font-family:'Playfair Display',serif; font-size:18px; color:var(--blue); line-height:1.5; margin-bottom:20px; font-weight:700; }
+.quiz-opt {
+  width:100%; padding:14px 16px; border:2px solid #E8EEF6; border-radius:12px;
+  background:var(--white); text-align:left; font-family:'DM Sans',sans-serif;
+  font-size:13.5px; cursor:pointer; margin-bottom:10px; color:var(--blue);
+  transition:all 0.15s; font-weight:500;
+}
+.quiz-opt.correct { border-color:#27AE60; background:#E8F8EF; color:#1A7A4A; }
+.quiz-opt.wrong { border-color:#E74C3C; background:#FDF0EE; color:#C0392B; }
+.quiz-opt:active { border-color:var(--gold); }
+.quiz-result { text-align:center; padding:30px 20px; }
+.quiz-emoji { font-size:70px; margin-bottom:16px; }
+.quiz-score { font-family:'Playfair Display',serif; font-size:52px; font-weight:900; color:var(--gold); }
+.quiz-msg { font-size:18px; font-weight:700; color:var(--blue); margin:8px 0 6px; }
+.quiz-sub { font-size:13px; color:#718096; margin-bottom:24px; }
+
+/* ── PAIEMENT ── */
+.pay-wrap { padding:16px; }
+.pay-card { background:var(--white); border-radius:16px; padding:20px; box-shadow:var(--shadow); margin-bottom:14px; }
+.pay-amount { font-family:'Playfair Display',serif; font-size:32px; font-weight:900; color:var(--blue); text-align:center; margin:12px 0; }
+.pay-method { border:2px solid #E8EEF6; border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:10px; transition:all 0.15s; }
+.pay-method.sel { border-color:var(--gold); background:rgba(201,168,76,0.06); }
+.pay-method:active { border-color:var(--gold); }
+.pay-method-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+.pay-method-name { font-weight:700; font-size:14px; }
+.pay-check { margin-left:auto; color:var(--gold); font-size:18px; }
+.pay-input { width:100%; padding:12px 14px; border:2px solid #E8EEF6; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--blue); outline:none; transition:border-color 0.2s; margin-bottom:12px; }
+.pay-input:focus { border-color:var(--gold); }
+.pay-success { text-align:center; padding:40px 20px; }
+
+/* ── CERTIFICAT ── */
+.cert-wrap { padding:16px; }
+.cert-card { background:var(--white); border-radius:20px; padding:28px 22px; text-align:center; border:2.5px solid var(--gold); box-shadow:0 8px 40px rgba(201,168,76,0.15); position:relative; overflow:hidden; }
+.cert-card::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, rgba(201,168,76,0.08), transparent 70%); pointer-events:none; }
+.cert-badge { font-size:50px; margin-bottom:10px; }
+.cert-institute { color:var(--gold); font-size:9.5px; letter-spacing:4px; text-transform:uppercase; font-weight:700; }
+.cert-for { font-size:12px; color:#718096; margin:14px 0 4px; }
+.cert-name { font-family:'Playfair Display',serif; font-size:26px; font-weight:900; color:var(--blue); }
+.cert-title-label { font-size:12px; color:#718096; margin:12px 0 6px; }
+.cert-course { background:#F0F4FB; border-radius:10px; padding:12px 16px; font-weight:700; font-size:13px; color:var(--blue); }
+.cert-divider { border:none; border-top:1.5px solid #E8EEF6; margin:18px 0; }
+.cert-meta { display:flex; justify-content:space-around; }
+.cert-meta-item { text-align:center; }
+.cert-meta-val { font-weight:800; font-size:13px; color:var(--blue); }
+.cert-meta-lbl { font-size:10px; color:#A0AEC0; margin-top:2px; }
+.cert-verify { font-size:10.5px; color:#A0AEC0; margin-top:16px; }
+
+/* ── FORUM ── */
+.forum-wrap { padding:16px; }
+.forum-post { background:var(--white); border-radius:14px; padding:14px; margin-bottom:12px; box-shadow:0 2px 10px rgba(27,45,91,0.06); }
+.post-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.post-av { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12px; color:var(--white); flex-shrink:0; }
+.post-author { font-weight:700; font-size:13px; }
+.post-meta { font-size:10.5px; color:#A0AEC0; }
+.post-text { font-size:13px; color:#2D3748; line-height:1.6; margin-bottom:10px; }
+.post-reply { background:#F8FAFC; border-radius:10px; padding:10px 12px; margin-bottom:6px; border-left:3px solid var(--gold); }
+.reply-author { font-weight:700; font-size:11px; color:var(--blue); margin-bottom:2px; }
+.reply-text { font-size:12px; color:#4A5568; line-height:1.5; }
+.reply-prof { border-left-color:var(--blue); }
+.forum-input-row { display:flex; gap:8px; margin-top:8px; }
+.forum-input { flex:1; padding:9px 12px; border:1.5px solid #E8EEF6; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:13px; outline:none; color:var(--blue); }
+.forum-input:focus { border-color:var(--gold); }
+.forum-send { background:var(--blue); border:none; border-radius:10px; padding:9px 14px; color:var(--white); font-size:14px; cursor:pointer; }
+.forum-compose { background:var(--white); border-radius:14px; padding:14px; margin-bottom:14px; box-shadow:0 2px 10px rgba(27,45,91,0.06); }
+.forum-textarea { width:100%; min-height:72px; padding:10px 12px; border:1.5px solid #E8EEF6; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:13px; outline:none; resize:none; color:var(--blue); }
+.forum-textarea:focus { border-color:var(--gold); }
+
+/* ── ANNONCE HERO ── */
+.promo {
+  margin:0 16px 16px; border-radius:18px; padding:20px;
+  background:linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 100%);
+}
+.promo-title { color:var(--white); font-family:'Playfair Display',serif; font-size:16px; font-weight:700; margin-bottom:5px; }
+.promo-text { color:rgba(255,255,255,0.65); font-size:12px; line-height:1.5; }
+.promo-btn { margin-top:14px; background:var(--gold); color:var(--blue-dark); border:none; padding:8px 16px; border-radius:8px; font-weight:700; font-size:11.5px; cursor:pointer; }
+
+/* ── DASHBOARD ── */
+.dash-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px 12px; }
+.dash-card { background:var(--white); border-radius:14px; padding:14px; box-shadow:0 2px 10px rgba(27,45,91,0.06); border-top:3px solid var(--gold); }
+.dash-val { font-family:'Playfair Display',serif; font-size:26px; font-weight:900; color:var(--blue); }
+.dash-lbl { font-size:10.5px; color:#A0AEC0; margin-top:2px; }
+.dash-icon { font-size:26px; margin-bottom:6px; }
+.enrolled-item { background:var(--white); border-radius:12px; padding:12px 14px; margin:0 16px 10px; display:flex; align-items:center; gap:12px; box-shadow:0 2px 8px rgba(27,45,91,0.06); cursor:pointer; border-left:4px solid var(--gold); }
+.enr-title { font-weight:700; font-size:13px; color:var(--blue); }
+.enr-sub { font-size:10.5px; color:#A0AEC0; margin-top:2px; }
+.enr-pct { margin-left:auto; font-weight:800; font-size:13px; color:var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="splash">
+  <div class="splash-logo">ALC</div>
+  <div class="splash-sub">Digital Campus</div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+</div>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+/* ═══════════ DONNÉES ═══════════ */
+const CATALOGUE = [
+  { id:"tech", icon:"🔧", label:"Filières Techniques", color:"#1A3A2A", accent:"#4CAF7D",
+    subs:[
+      { id:"bat", label:"Bâtiment & Infrastructures", icon:"🏗️", programs:["Électricité bâtiment","Plomberie & Installation sanitaire","Maçonnerie","Menuiserie aluminium","Construction métallique"] },
+      { id:"maint", label:"Maintenance & Technologies", icon:"⚙️", programs:["Mécanique auto & moto","Froid & Climatisation","Maintenance industrielle","Maintenance informatique & réseaux"] },
+      { id:"hotel", label:"Hôtellerie & Métiers de Bouche", icon:"🍽️", programs:["Restauration professionnelle","Service de restauration","Réception hôtelière","Pâtisserie & Décoration"] },
+      { id:"agro", label:"Agro & Transformation", icon:"🌱", programs:["Production maraîchère modernisée","Transformation agro-alimentaire","Agro-business & Commercialisation","Logistique & Gestion de stocks"] },
+    ]
+  },
+  { id:"cs1", icon:"📘", label:"Cycle Supérieur 1", color:"#1B2D5B", accent:"#C9A84C",
+    subs:[
+      { id:"com1", label:"Communication & Image", icon:"📣", programs:["Communication institutionnelle et digitale","Attaché de presse & Communication de crise","Branding & Image de marque","Storytelling institutionnel","Communication interne & Conduite du changement","Prise de parole & Média training","Gestion de réputation & e-réputation","Marketing territorial","Communication éthique & RSE"] },
+      { id:"gov1", label:"Gestion & Gouvernance", icon:"🏛️", programs:["Gestion des ONG et associations","Organisation & Structuration des associations","Gestion financière et administrative","Développement de partenariats stratégiques","Suivi & Évaluation de projets humanitaires","Leadership institutionnel"] },
+      { id:"proj1", label:"Gestion de Projets", icon:"📋", programs:["Principes & Méthodologies PMP","Planification & Pilotage de projets","Budget & Gestion des ressources","Méthodes Agile et Waterfall","Suivi & Évaluation des projets"] },
+      { id:"intel1", label:"Intelligence & Leadership", icon:"🧠", programs:["Intelligence émotionnelle & Gestion du stress","Intelligence économique & Concurrentielle","Intelligence contextuelle & Situationnelle","Diplomatie organisationnelle","Management de la qualité ISO 9001:2025"] },
+      { id:"trans1", label:"Compétences Transversales", icon:"🔀", programs:["Marketing digital & e-commerce","Finance & Comptabilité de gestion","Entrepreneuriat & Innovation","Développement personnel & Soft skills"] },
+    ]
+  },
+  { id:"cs2", icon:"📗", label:"Cycle Supérieur 2", color:"#2B1A3A", accent:"#A855E8",
+    subs:[
+      { id:"comstr", label:"Communication Stratégique", icon:"🎯", programs:["Communication stratégique intégrée","Relations publiques, lobbying & Influence","Brand management & Storytelling stratégique","Communication digitale avancée","Prise de parole exécutive","Communication éthique & RSE pour leaders"] },
+      { id:"gouv2", label:"Gouvernance & Management Avancé", icon:"⚖️", programs:["Leadership organisationnel & Gouvernance stratégique","Audit organisationnel & Conformité","Planification stratégique avancée","Gestion du changement","Développement de partenariats internationaux"] },
+      { id:"risk", label:"Gestion des Risques", icon:"🛡️", programs:["Gestion intégrée des risques","Sécurité organisationnelle & Cybersécurité","Continuité des activités & Plan de crise","Audit sécurité & Conformité","Simulation de crise & Prise de décision"] },
+      { id:"entrepr", label:"Entrepreneuriat & Digital", icon:"🚀", programs:["Stratégie d'entreprise & Plan de croissance","Innovation organisationnelle & Business model","Transformation digitale des processus","Création & Développement d'entreprises"] },
+      { id:"diplo", label:"Diplomatie & Négociation", icon:"🤝", programs:["Diplomatie organisationnelle & économique","Négociation avancée & Partenariats internationaux","Lobbying stratégique & Advocacy","Diplomatie interculturelle"] },
+    ]
+  },
+  { id:"form", icon:"🎓", label:"Formation de Formateur", color:"#0D2B4A", accent:"#3DC9E8",
+    subs:[
+      { id:"form1", label:"Cycle 1 — Formateur Débutant", icon:"📝", programs:["Principes & Compétences du formateur","S'estimer & Développer sa confiance","Gestion du stress & Peur devant le public","Présenter & Convaincre","Communiquer efficacement","Concevoir l'ingénierie de la formation","Identification & Conception des supports pédagogiques"] },
+      { id:"form2", label:"Cycle 2 — Formateur Expert", icon:"🎙️", programs:["Conception pédagogique avancée","Conduite & Animation de séminaire","Marketing de soi du formateur","Promotion formateur & Infopreneur sur le web","Digital learning & MOOC","Évaluation & Mesure d'impact","Storytelling pédagogique"] },
+    ]
+  },
+];
+
+const PRICES = [20000,25000,28000,30000,35000,38000,40000,45000,50000,55000];
+const LEVELS = ["Débutant","Intermédiaire","Avancé"];
+let pid = 0;
+const ALL_PROGS = CATALOGUE.flatMap(cat =>
+  cat.subs.flatMap(sub =>
+    sub.programs.map(title => {
+      pid++;
+      return { id:`p${pid}`, title, subId:sub.id, subLabel:sub.label, subIcon:sub.icon,
+        catId:cat.id, catLabel:cat.label, catIcon:cat.icon, catColor:cat.color, accent:cat.accent,
+        price:PRICES[pid%PRICES.length], level:LEVELS[pid%3], enrolled:false, progress:0 };
+    })
+  )
+);
+
+const QUIZ_BANK = [
+  { q:"Quelle est la première étape de l'ingénierie de formation ?", opts:["Créer les supports","Analyser les besoins","Animer la session","Évaluer les apprenants"], ans:1 },
+  { q:"La méthode Agile repose principalement sur :", opts:["Un planning rigide","Des cycles courts et itératifs","La hiérarchie stricte","Des rapports mensuels"], ans:1 },
+  { q:"Le storytelling institutionnel sert à :", opts:["Vendre des produits","Créer un lien émotionnel","Gérer les conflits","Contrôler les finances"], ans:1 },
+  { q:"L'ISO 9001:2025 concerne :", opts:["La sécurité informatique","Le management de la qualité","La gestion des RH","Le marketing digital"], ans:1 },
+  { q:"L'intelligence émotionnelle dans le leadership permet de :", opts:["Mieux gérer son budget","Mieux comprendre et motiver les équipes","Améliorer la comptabilité","Réduire les réunions"], ans:1 },
+];
+
+const FORUM_INIT = [
+  { id:1, author:"Kouamé A.", av:"KA", color:"#1B2D5B", cat:"Cycle Supérieur 1", time:"Il y a 2h",
+    text:"Comment distinguer la communication de crise de la communication institutionnelle classique ?",
+    replies:[{ author:"Prof. Yao", av:"PY", color:"#8B4513", text:"La communication de crise est réactive et urgente — elle protège la réputation. La communication institutionnelle est proactive et stratégique.", time:"Il y a 1h", isProf:true }] },
+  { id:2, author:"Marie-Claire K.", av:"MK", color:"#1A5C35", cat:"Formation de Formateur", time:"Il y a 5h",
+    text:"J'ai terminé le Storytelling pédagogique — vraiment transformateur ! Mes formations ont changé du tout au tout.", replies:[] },
+  { id:3, author:"Ibrahim S.", av:"IS", color:"#2B1A3A", cat:"Cycle Supérieur 2", time:"Hier",
+    text:"Le module ISO 9001:2025 est vraiment à jour avec les dernières normes. Impressionnant !",
+    replies:[{ author:"Prof. Adjoua", av:"PA", color:"#8B1A1A", text:"Merci ! Nous mettons à jour le contenu chaque trimestre pour rester alignés avec les standards internationaux.", time:"Il y a 20h", isProf:true }] },
+];
+
+/* ═══════════ LOGO SVG ═══════════ */
+const LogoSVG = ({size=38}) => (
+  <svg viewBox="0 0 80 80" width={size} height={size} fill="none">
+    <path d="M40 4L72 18L72 50C72 64 57 74 40 78C23 74 8 64 8 50L8 18Z" fill="#1B2D5B" stroke="#C9A84C" strokeWidth="2.5"/>
+    <path d="M40 14L62 24L62 48C62 58 52 66 40 70C28 66 18 58 18 48L18 24Z" fill="none" stroke="white" strokeWidth="1.5" opacity=".5"/>
+    <text x="40" y="50" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold" fontFamily="Georgia,serif">A</text>
+    <polygon points="40,16 43,22 49,22 44,26 46,32 40,28 34,32 36,26 31,22 37,22" fill="#C9A84C"/>
+  </svg>
+);
+
+/* ═══════════ APP ═══════════ */
+function App() {
+  const [tab, setTab]           = useState("home");
+  const [programs, setPrograms] = useState(ALL_PROGS);
+  const [expCat, setExpCat]     = useState(null);
+  const [expSub, setExpSub]     = useState(null);
+  const [activeProg, setActive] = useState(null);
+  const [subView, setSubView]   = useState(null); // null | 'course' | 'quiz' | 'cert' | 'pay'
+  const [certProg, setCert]     = useState(null);
+
+  // Quiz
+  const [qStep, setQStep]   = useState(0);
+  const [qAns, setQAns]     = useState([]);
+  const [qSel, setQSel]     = useState(null);
+  const [qDone, setQDone]   = useState(false);
+
+  // Paiement
+  const [payMethod, setPayMethod] = useState(null);
+  const [payPhone, setPayPhone]   = useState("");
+  const [payOk, setPayOk]         = useState(false);
+
+  // Forum
+  const [posts, setPosts]         = useState(FORUM_INIT);
+  const [newPost, setNewPost]     = useState("");
+  const [replyMap, setReplyMap]   = useState({});
+
+  const enrolled  = programs.filter(p => p.enrolled);
+  const completed = programs.filter(p => p.progress === 100);
+  const totalPct  = enrolled.length ? Math.round(enrolled.reduce((s,p)=>s+p.progress,0)/enrolled.length) : 0;
+
+  const enroll = id => setPrograms(prev => prev.map(p => p.id===id ? {...p, enrolled:true, progress:10} : p));
+
+  const openCourse = prog => { setActive(prog); setSubView("course"); };
+  const openPay    = prog => { setActive(prog); setPayMethod(null); setPayPhone(""); setPayOk(false); setSubView("pay"); };
+
+  const resetQuiz = () => { setQStep(0); setQAns([]); setQSel(null); setQDone(false); };
+  const startQuiz = () => { resetQuiz(); setSubView("quiz"); };
+
+  const handleAnswer = i => {
+    setQSel(i);
+    setTimeout(() => {
+      const next = [...qAns, i];
+      setQAns(next);
+      if (qStep+1 < QUIZ_BANK.length) { setQStep(s=>s+1); setQSel(null); }
+      else setQDone(true);
+    }, 700);
+  };
+
+  const confirmPay = () => {
+    if (!payPhone.trim()) return;
+    setPayOk(true);
+    enroll(activeProg.id);
+  };
+
+  const submitPost = () => {
+    if (!newPost.trim()) return;
+    setPosts(prev => [{ id:Date.now(), author:"Kan Parfait", av:"KP", color:"#1B2D5B", cat:"Général", time:"À l'instant", text:newPost, replies:[] }, ...prev]);
+    setNewPost("");
+  };
+  const submitReply = id => {
+    if (!replyMap[id]?.trim()) return;
+    setPosts(prev => prev.map(p => p.id===id ? {...p, replies:[...p.replies, { author:"Kan Parfait", av:"KP", text:replyMap[id], time:"À l'instant", isProf:false }]} : p));
+    setReplyMap(r => ({...r, [id]:""}));
+  };
+
+  /* ── Vue course ── */
+  if (subView === "course" && activeProg) {
+    const prog = programs.find(p=>p.id===activeProg.id) || activeProg;
+    const lessons = [
+      {title:"Introduction & Objectifs", dur:"40 min", done:true},
+      {title:"Fondements & Concepts clés", dur:"55 min", done:true},
+      {title:"Support de cours (PDF)", dur:"PDF", done:prog.progress>=30},
+      {title:"Approfondissement pratique", dur:"35 min", done:prog.progress>=50},
+      {title:"Étude de cas réel", dur:"30 min", done:prog.progress>=60},
+      {title:"Maîtrise avancée", dur:"50 min", done:prog.progress>=70},
+      {title:"Quiz d'évaluation", dur:"15 min", done:prog.progress>=90},
+      {title:"Projet final & Certification", dur:"2h", done:prog.progress===100},
+    ];
+    return (
+      <div className="app">
+        <div className="hdr">
+          <div className="hdr-brand"><LogoSVG/><div><div className="hdr-title">ALC Digital Campus</div><div className="hdr-sub">Formation · Impact · Influence</div></div></div>
+          <div className="hdr-avatar">KP</div>
+        </div>
+        <div className="page">
+          <button className="btn-back" onClick={()=>setSubView(null)}>← Retour</button>
+          <div className="mod-hero" style={{background:`linear-gradient(135deg,${prog.catColor},${prog.catColor}CC)`}}>
+            <div className="mod-hero-top">
+              <div className="mod-cat-tag" style={{color:prog.accent}}>{prog.catIcon} {prog.catLabel}</div>
+              <div className="mod-hero-title">{prog.title}</div>
+              <div className="mod-meta"><span>📊 {prog.level}</span><span>💰 {prog.price.toLocaleString()} FCFA</span></div>
+              <div className="progress-wrap">
+                <div className="progress-bar"><div className="progress-fill" style={{width:prog.progress+'%'}}/></div>
+                <div className="progress-lbl">{prog.progress}% complété</div>
+              </div>
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-title">📋 Contenu du cours</div>
+            {lessons.map((l,i) => (
+              <div className="lesson-row" key={i}>
+                <div className={`lesson-num ${l.done?'done':'todo'}`}>{l.done?'✓':i+1}</div>
+                <div className="lesson-name">{l.title}</div>
+                <div className="lesson-dur">{l.dur}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{padding:"0 16px 16px", display:"flex", flexDirection:"column", gap:10}}>
+            <button className="btn btn-gold" onClick={startQuiz}>🧠 Passer l'évaluation</button>
+            {prog.progress===100 && <button className="btn btn-blue" onClick={()=>{setCert(prog);setSubView("cert");}}>🎓 Télécharger mon certificat</button>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Vue Quiz ── */
+  if (subView === "quiz") {
+    const score = qAns.filter((a,i)=>a===QUIZ_BANK[i]?.ans).length;
+    return (
+      <div className="app">
+        <div className="hdr">
+          <div className="hdr-brand"><LogoSVG/><div><div className="hdr-title">ALC Digital Campus</div><div className="hdr-sub">Formation · Impact · Influence</div></div></div>
+          <div className="hdr-avatar">KP</div>
+        </div>
+        <div className="page">
+          <button className="btn-back" onClick={()=>setSubView("course")}>← Cours</button>
+          <div className="quiz-wrap">
+            {!qDone ? (
+              <>
+                <div className="quiz-header">
+                  <div className="quiz-step">Question {qStep+1} sur {QUIZ_BANK.length}</div>
+                  <div style={{fontSize:11, color:"#A0AEC0"}}>Score actuel : {qAns.filter((a,i)=>a===QUIZ_BANK[i]?.ans).length}/{qStep}</div>
+                </div>
+                <div className="quiz-prog"><div className="quiz-prog-fill" style={{width:`${(qStep/QUIZ_BANK.length)*100}%`}}/></div>
+                <div className="quiz-q">{QUIZ_BANK[qStep].q}</div>
+                {QUIZ_BANK[qStep].opts.map((opt,i) => {
+                  let cls = "quiz-opt";
+                  if (qSel!==null) { if(i===QUIZ_BANK[qStep].ans) cls+=" correct"; else if(i===qSel) cls+=" wrong"; }
+                  return <button key={i} className={cls} onClick={()=>qSel===null&&handleAnswer(i)}><span style={{fontWeight:800,marginRight:8}}>{["A","B","C","D"][i]}.</span>{opt}</button>;
+                })}
+              </>
+            ) : (
+              <div className="quiz-result">
+                <div className="quiz-emoji">{score===QUIZ_BANK.length?"🏆":score>=3?"🎉":"💪"}</div>
+                <div className="quiz-score">{score}/{QUIZ_BANK.length}</div>
+                <div className="quiz-msg">{score===QUIZ_BANK.length?"Parfait !":score>=3?"Très bien !":"Continue !"}</div>
+                <div className="quiz-sub">{Math.round((score/QUIZ_BANK.length)*100)}% — {score>=3?"Module validé !":"Relisez le support et réessayez."}</div>
+                <button className="btn btn-outline" style={{marginBottom:10,width:"100%"}} onClick={resetQuiz}>🔄 Recommencer</button>
+                {score>=3 && <button className="btn btn-gold" onClick={()=>{ if(activeProg){setPrograms(prev=>prev.map(p=>p.id===activeProg.id?{...p,progress:100}:p));setActive(p=>p?{...p,progress:100}:p);setCert({...activeProg,progress:100});setSubView("cert");} }}>🎓 Obtenir mon certificat</button>}
+                {score<3 && <button className="btn btn-blue" style={{marginTop:10}} onClick={()=>setSubView("course")}>Retour au cours</button>}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Vue Paiement ── */
+  if (subView === "pay" && activeProg) {
+    return (
+      <div className="app">
+        <div className="hdr">
+          <div className="hdr-brand"><LogoSVG/><div><div className="hdr-title">ALC Digital Campus</div><div className="hdr-sub">Formation · Impact · Influence</div></div></div>
+          <div className="hdr-avatar">KP</div>
+        </div>
+        <div className="page">
+          <button className="btn-back" onClick={()=>setSubView(null)}>← Retour</button>
+          <div className="pay-wrap">
+            {!payOk ? (
+              <>
+                <div className="pay-card">
+                  <div style={{textAlign:"center"}}>
+                    <div style={{fontSize:11, color:"#718096"}}>Inscription à la formation</div>
+                    <div style={{fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, color:"var(--blue)", margin:"6px 0 4px"}}>{activeProg.title}</div>
+                  </div>
+                  <div className="pay-amount">{activeProg.price.toLocaleString()} FCFA</div>
+                  <div style={{fontSize:12, color:"#718096", textAlign:"center"}}>{activeProg.catIcon} {activeProg.catLabel}</div>
+                </div>
+                <div style={{fontSize:12, color:"#718096", fontWeight:700, marginBottom:10}}>Mode de paiement</div>
+                {[{id:"orange",label:"Orange Money",icon:"🟠",bg:"#FF6600"},{id:"momo",label:"MTN Mobile Money",icon:"🟡",bg:"#FFCC00"},{id:"wave",label:"Wave",icon:"🔵",bg:"#2196F3"}].map(m=>(
+                  <div key={m.id} className={`pay-method ${payMethod===m.id?"sel":""}`} onClick={()=>setPayMethod(m.id)}>
+                    <div className="pay-method-icon" style={{background:m.bg+"22"}}>{m.icon}</div>
+                    <div className="pay-method-name">{m.label}</div>
+                    {payMethod===m.id && <div className="pay-check">✓</div>}
+                  </div>
+                ))}
+                {payMethod && (
+                  <div style={{marginTop:14}}>
+                    <input className="pay-input" value={payPhone} onChange={e=>setPayPhone(e.target.value)} placeholder="Numéro de téléphone (ex: 07 00 00 00 00)"/>
+                    <button className="btn btn-gold" onClick={confirmPay} disabled={!payPhone.trim()}>✅ Confirmer le paiement</button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="pay-success">
+                <div style={{fontSize:72}}>🎉</div>
+                <div style={{fontFamily:"'Playfair Display',serif", fontSize:22, fontWeight:800, color:"var(--green)", margin:"12px 0 8px"}}>Inscription confirmée !</div>
+                <div style={{fontSize:13, color:"#718096", marginBottom:24}}>Vous avez accès à : <strong>{activeProg.title}</strong></div>
+                <button className="btn btn-gold" onClick={()=>openCourse(programs.find(p=>p.id===activeProg.id)||activeProg)}>▶️ Commencer la formation</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Vue Certificat ── */
+  if (subView === "cert" && certProg) {
+    const num = `ALC-${certProg.id.toUpperCase()}-2025`;
+    return (
+      <div className="app">
+        <div className="hdr">
+          <div className="hdr-brand"><LogoSVG/><div><div className="hdr-title">ALC Digital Campus</div><div className="hdr-sub">Formation · Impact · Influence</div></div></div>
+          <div className="hdr-avatar">KP</div>
+        </div>
+        <div className="page">
+          <button className="btn-back" onClick={()=>setSubView(null)}>← Retour</button>
+          <div className="cert-wrap">
+            <div className="cert-card">
+              <LogoSVG size={56}/>
+              <div className="cert-institute" style={{marginTop:10}}>ALC Institute</div>
+              <div style={{fontSize:10, color:"#A0AEC0", letterSpacing:2, marginTop:2}}>Formation · Impact · Influence</div>
+              <div className="cert-for">Ce certificat est décerné à</div>
+              <div className="cert-name">Kan Parfait Kouamé</div>
+              <div className="cert-title-label">pour avoir complété avec succès</div>
+              <div className="cert-course">{certProg.title}</div>
+              <div style={{fontSize:11, color:"#A0AEC0", margin:"8px 0 0"}}>{certProg.catIcon} {certProg.catLabel}</div>
+              <hr className="cert-divider"/>
+              <div className="cert-meta">
+                <div className="cert-meta-item"><div className="cert-meta-val">2025</div><div className="cert-meta-lbl">Année</div></div>
+                <div className="cert-meta-item"><div className="cert-meta-val" style={{fontSize:11}}>{num}</div><div className="cert-meta-lbl">Numéro</div></div>
+                <div className="cert-meta-item"><div className="cert-meta-val">{certProg.level}</div><div className="cert-meta-lbl">Niveau</div></div>
+              </div>
+              <div className="cert-verify">Vérifiable sur alc-institute.com · {num}</div>
+            </div>
+            <div style={{marginTop:14}}>
+              <button className="btn btn-gold" onClick={()=>{setSubView(null);setTab("dashboard");}}>← Tableau de bord</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── TABS PRINCIPAUX ── */
+  return (
+    <div className="app">
+      {/* Header */}
+      <div className="hdr">
+        <div className="hdr-brand">
+          <LogoSVG/>
+          <div><div className="hdr-title">ALC Digital Campus</div><div className="hdr-sub">Formation · Impact · Influence</div></div>
+        </div>
+        <div className="hdr-avatar">KP</div>
+      </div>
+
+      {/* Pages */}
+      <div className="page">
+
+        {/* ── ACCUEIL ── */}
+        {tab==="home" && <>
+          <div className="hero" style={{margin:"16px 16px 12px"}}>
+            <div className="hero-name">Bienvenue,</div>
+            <div className="hero-user">Kan Parfait Kouamé</div>
+            <div className="hero-row">
+              <div className="hero-stat"><div className="hero-stat-val">{totalPct}%</div><div className="hero-stat-lbl">Progression</div></div>
+              <div className="hero-stat"><div className="hero-stat-val">{enrolled.length}</div><div className="hero-stat-lbl">Inscrits</div></div>
+              <div className="hero-stat"><div className="hero-stat-val">{completed.length}</div><div className="hero-stat-lbl">Terminés</div></div>
+            </div>
+          </div>
+
+          <div className="sec"><div className="sec-title">Nos Filières</div><div className="sec-sub">Cliquez pour explorer</div></div>
+          <div style={{height:10}}/>
+          {CATALOGUE.map(cat=>(
+            <div key={cat.id} style={{marginBottom:0}}>
+              <div className={`fil-card ${expCat===cat.id?"fil-open":""}`} style={{borderLeftColor:cat.accent}} onClick={()=>setExpCat(expCat===cat.id?null:cat.id)}>
+                <div className="fil-card-inner">
+                  <div className="fil-icon" style={{background:cat.color+"20"}}>{cat.icon}</div>
+                  <div><div className="fil-label">{cat.label}</div><div className="fil-count">{cat.subs.reduce((t,s)=>t+s.programs.length,0)} programmes</div></div>
+                  <div className="fil-arrow">›</div>
+                </div>
+              </div>
+              {expCat===cat.id && (
+                <div className="sub-wrap">
+                  {cat.subs.map(sub=>(
+                    <div key={sub.id}>
+                      <div className="sub-card" onClick={()=>setExpSub(expSub===sub.id?null:sub.id)}>
+                        <span className="sub-chev">{expSub===sub.id?"▲":"▼"}</span>
+                        <div className="sub-title">{sub.icon} {sub.label}</div>
+                        <div className="sub-count">{sub.programs.length} programmes</div>
+                      </div>
+                      {expSub===sub.id && (
+                        <div className="mod-list">
+                          {programs.filter(p=>p.subId===sub.id).map(p=>(
+                            <div key={p.id} className="mod-item" onClick={()=>p.enrolled?openCourse(p):openPay(p)}>
+                              <div className="mod-dot" style={{background:cat.accent}}/>
+                              <div className="mod-name">{p.title}</div>
+                              {p.enrolled ? <div className="mod-enrolled">✓ {p.progress}%</div> : <div className="mod-price">{p.price.toLocaleString()} F</div>}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div className="promo">
+            <div className="promo-title">🚀 Prochaine Cohorte</div>
+            <div className="promo-text">Les inscriptions pour la session de Février 2026 sont ouvertes. Rejoignez des centaines d'apprenants !</div>
+            <button className="promo-btn">S'informer →</button>
+          </div>
+        </>}
+
+        {/* ── DASHBOARD ── */}
+        {tab==="dashboard" && <>
+          <div className="sec" style={{marginBottom:16}}><div className="sec-title">Tableau de Bord</div><div className="sec-sub">Votre progression globale</div></div>
+          <div className="dash-grid">
+            {[{icon:"📈",val:`${totalPct}%`,lbl:"Progression"},{icon:"📚",val:enrolled.length,lbl:"Inscrits"},{icon:"🔥",val:enrolled.filter(p=>p.progress>0&&p.progress<100).length,lbl:"En cours"},{icon:"✅",val:completed.length,lbl:"Terminés"}].map((s,i)=>(
+              <div key={i} className="dash-card"><div className="dash-icon">{s.icon}</div><div className="dash-val">{s.val}</div><div className="dash-lbl">{s.lbl}</div></div>
+            ))}
+          </div>
+          {enrolled.length===0 ? (
+            <div style={{textAlign:"center", padding:"40px 20px"}}>
+              <div style={{fontSize:54, marginBottom:12}}>📚</div>
+              <div style={{fontWeight:700, fontSize:16, color:"var(--blue)", marginBottom:6}}>Aucune formation</div>
+              <div style={{fontSize:13, color:"#718096", marginBottom:18}}>Inscrivez-vous à un module pour commencer</div>
+              <button className="btn btn-gold" style={{width:"auto", padding:"12px 28px"}} onClick={()=>setTab("home")}>Explorer le catalogue</button>
+            </div>
+          ) : (
+            <>
+              <div className="sec" style={{marginBottom:12}}><div className="sec-title" style={{fontSize:16}}>Mes formations</div></div>
+              {enrolled.map(p=>(
+                <div key={p.id} className="enrolled-item" onClick={()=>openCourse(p)}>
+                  <div>
+                    <div className="enr-title">{p.title}</div>
+                    <div className="enr-sub">{p.catIcon} {p.catLabel}</div>
+                    <div style={{height:4, background:"#E8EEF6", borderRadius:3, marginTop:6, overflow:"hidden", width:140}}>
+                      <div style={{height:"100%", background:"var(--gold)", width:p.progress+"%", borderRadius:3}}/>
+                    </div>
+                  </div>
+                  <div className="enr-pct">{p.progress}%</div>
+                </div>
+              ))}
+              {completed.length>0 && <>
+                <div className="sec" style={{marginBottom:12}}><div className="sec-title" style={{fontSize:16}}>🎓 Certificats</div></div>
+                {completed.map(p=>(
+                  <div key={p.id} className="enrolled-item" style={{borderLeftColor:"var(--green)"}} onClick={()=>{setCert(p);setSubView("cert");}}>
+                    <div><div className="enr-title">{p.title}</div><div className="enr-sub">✅ Terminé</div></div>
+                    <div style={{fontSize:11, color:"var(--green)", fontWeight:700}}>Voir →</div>
+                  </div>
+                ))}
+              </>}
+            </>
+          )}
+        </>}
+
+        {/* ── FORUM ── */}
+        {tab==="forum" && <>
+          <div className="sec" style={{marginBottom:14}}><div className="sec-title">Forum</div><div className="sec-sub">Échangez avec la communauté</div></div>
+          <div className="forum-wrap">
+            <div className="forum-compose">
+              <textarea className="forum-textarea" value={newPost} onChange={e=>setNewPost(e.target.value)} placeholder="Posez votre question à la communauté ALC…"/>
+              <div style={{textAlign:"right", marginTop:8}}>
+                <button className="btn btn-gold" style={{width:"auto", padding:"9px 20px", fontSize:13}} onClick={submitPost}>Publier</button>
+              </div>
+            </div>
+            {posts.map(post=>(
+              <div key={post.id} className="forum-post">
+                <div className="post-header">
+                  <div className="post-av" style={{background:post.color}}>{post.av}</div>
+                  <div><div className="post-author">{post.author}</div><div className="post-meta">{post.cat} · {post.time}</div></div>
+                </div>
+                <div className="post-text">{post.text}</div>
+                {post.replies.map((r,i)=>(
+                  <div key={i} className={`post-reply ${r.isProf?"reply-prof":""}`}>
+                    <div className="reply-author">{r.av} {r.author} {r.isProf?"👨‍🏫":""}</div>
+                    <div className="reply-text">{r.text}</div>
+                  </div>
+                ))}
+                <div className="forum-input-row">
+                  <input className="forum-input" value={replyMap[post.id]||""} onChange={e=>setReplyMap(r=>({...r,[post.id]:e.target.value}))} placeholder="Répondre…"/>
+                  <button className="forum-send" onClick={()=>submitReply(post.id)}>↩</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>}
+
+        {/* ── PROFIL ── */}
+        {tab==="profile" && <>
+          <div className="sec" style={{marginBottom:16}}><div className="sec-title">Mon Profil</div></div>
+          <div style={{margin:"0 16px 16px", background:"linear-gradient(135deg,var(--blue-dark),var(--blue))", borderRadius:20, padding:"28px 22px", textAlign:"center"}}>
+            <div style={{width:72, height:72, borderRadius:"50%", background:"linear-gradient(135deg,var(--gold),var(--gold-light))", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:900, color:"var(--blue)", fontSize:28, margin:"0 auto 14px"}}>KP</div>
+            <div style={{color:"var(--white)", fontFamily:"'Playfair Display',serif", fontSize:20, fontWeight:700}}>Kan Parfait Kouamé</div>
+            <div style={{color:"var(--gold)", fontSize:10, letterSpacing:3, marginTop:4}}>APPRENANT ALC INSTITUTE</div>
+            <div style={{display:"flex", justifyContent:"center", gap:20, marginTop:20}}>
+              {[{v:enrolled.length,l:"Inscrits"},{v:completed.length,l:"Terminés"},{v:completed.length*100,l:"Points"}].map((s,i)=>(
+                <div key={i} style={{textAlign:"center"}}>
+                  <div style={{color:"var(--gold)", fontSize:22, fontWeight:900, fontFamily:"'Playfair Display',serif"}}>{s.v}</div>
+                  <div style={{color:"rgba(255,255,255,0.5)", fontSize:10}}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {[{icon:"📧", label:"kanparfaitkouame@gmail.com"},{icon:"📍", label:"Côte d'Ivoire"},{icon:"🎓", label:"Apprenant ALC Institute"}].map((item,i)=>(
+            <div key={i} style={{margin:"0 16px 10px", background:"var(--white)", borderRadius:12, padding:"13px 16px", display:"flex", alignItems:"center", gap:12, boxShadow:"0 2px 8px rgba(27,45,91,0.06)"}}>
+              <span style={{fontSize:18}}>{item.icon}</span>
+              <span style={{fontSize:13, color:"var(--blue)", fontWeight:500}}>{item.label}</span>
+            </div>
+          ))}
+        </>}
+      </div>
+
+      {/* Bottom Nav */}
+      <div className="nav">
+        {[{key:"home",icon:"🏠",label:"Accueil"},{key:"dashboard",icon:"📊",label:"Suivi"},{key:"forum",icon:"💬",label:"Forum"},{key:"profile",icon:"👤",label:"Profil"}].map(n=>(
+          <button key={n.key} className={`nav-btn ${tab===n.key?"on":""}`} onClick={()=>setTab(n.key)}>
+            <span className="nav-icon">{n.icon}</span>{n.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
